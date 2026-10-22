@@ -4,7 +4,7 @@ Status: historical discovery notes researched 2026-10-22, with a current collect
 
 ## Current collector and API review
 
-The [legacy collector prototype](BCCR_COLLECTOR.md) is implemented and tested offline; it is not the intended production integration. The linked review records BCCR's announced 2026-06-30 retirement, the separately located official replacement SDDE API guide, inaccessible pages and remaining uncertainties. Neither interface has been authenticated here. The following original discovery notes describe historical evidence, not current service availability.
+The [SDDE REST adapter](BCCR_SDDE.md) is implemented and tested offline. The [legacy collector prototype](BCCR_COLLECTOR.md) remains intact and is not the intended production integration. The linked review records BCCR's announced 2026-06-30 retirement, the separately located official replacement SDDE API guide, inaccessible pages and remaining uncertainties. Neither interface has been authenticated here. The following original discovery notes describe historical evidence, not current service availability.
 
 ## Repository and access status
 

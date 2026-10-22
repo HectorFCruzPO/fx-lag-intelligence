@@ -1,6 +1,6 @@
 # FX Lag Intelligence — Product Requirements Document
 
-Status: product proposal for human review. The full MVP is not implemented. A [legacy BCCR collector prototype](BCCR_COLLECTOR.md) is implemented and tested offline; no live integration is verified.
+Status: product proposal for human review. The full MVP is not implemented. A [BCCR SDDE adapter](BCCR_SDDE.md) and [legacy prototype](BCCR_COLLECTOR.md) are implemented and tested offline; no live integration is verified.
 
 ## Product vision
 
@@ -41,7 +41,7 @@ The schedule is every 15 days, not necessarily twice per calendar month. The use
 
 ### Out of scope
 
-Automated currency trading, bank-account access, guaranteed forecasts, causal claims, a claimed fixed adjustment lag, multi-user commercial operations, and machine-learning prediction are outside the MVP. The original PRD task delivered documentation only. The current repository also includes a legacy BCCR collector prototype tested offline; deployments, paid services and the full MVP remain unimplemented.
+Automated currency trading, bank-account access, guaranteed forecasts, causal claims, a claimed fixed adjustment lag, multi-user commercial operations, and machine-learning prediction are outside the MVP. The original PRD task delivered documentation only. The current repository also includes a BCCR SDDE adapter and a legacy prototype tested offline; deployments, paid services and the full MVP remain unimplemented.
 
 ## Data sources and discovery decisions
 
