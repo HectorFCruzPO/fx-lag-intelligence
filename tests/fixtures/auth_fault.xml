@@ -1,0 +1,1 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><soap:Fault><faultcode>soap:Client</faultcode><faultstring>Token inválido: secret-never-display</faultstring></soap:Fault></soap:Body></soap:Envelope>

@@ -147,3 +147,10 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Python collector and local data
+__pycache__/
+*.py[cod]
+.venv/
+work/
+rates*.json
