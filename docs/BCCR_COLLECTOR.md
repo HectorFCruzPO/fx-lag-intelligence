@@ -1,16 +1,23 @@
 # BCCR USD compra collector
 
-This first collector requests **BCCR reference USD compra, indicator 317**, in CRC per USD. It is reference context, not an executable bank quote. It does not collect Promerica or MONEX data, store a database, run on a schedule, predict rates, or send alerts.
+The legacy collector requests **BCCR reference USD compra, indicator 317**, in CRC per USD. It is reference context, not an executable bank quote. It does not collect Promerica or MONEX data, store a database, run on a schedule, predict rates, or send alerts.
+
+## Available collectors
+
+- **SDDE REST adapter:** `python -m fx_lag.bccr_sdde`, using the separate `BCCR_SDDE_TOKEN` environment variable. Implemented and tested offline; see [SDDE setup, usage and live-validation limits](BCCR_SDDE.md).
+- **Legacy SOAP prototype:** `python -m fx_lag.bccr`, retained intact for historical/testing purposes. Its setup is below. It is not the intended production integration.
+
+Neither adapter has completed a successful authenticated live request. The following source review records what is documented, not a live-operation claim.
 
 ## Status: legacy prototype, not a production integration
 
-**The Python implementation works against offline fixtures and mocks. It is not a verified live integration.** BCCR announced retirement of the legacy Web Service for 2026-06-30. This collector targets that legacy service and is **not the intended production integration**. A future production adapter should target the officially documented SDDE API after authenticated validation.
+**The Python implementation works against offline fixtures and mocks. It is not a verified live integration.** BCCR announced retirement of the legacy Web Service for 2026-06-30. This collector targets that legacy service and is **not the intended production integration**. The separate SDDE adapter targets the officially documented replacement, but authenticated validation is still required before production use.
 
 | Capability | Evidence and limit |
 | --- | --- |
 | Legacy request construction, XML parsing and errors | Implemented and tested offline with synthetic fixtures; no real rates collected. |
 | Legacy service retirement | Official announcement verified; actual shutdown not independently confirmed by an authenticated request. |
-| Replacement SDDE API | Official technical documentation located and read; no replacement adapter implemented or live request authenticated. |
+| Replacement SDDE API | Official technical documentation located and read; separate REST adapter implemented and tested offline; no live request authenticated. |
 
 ### Confirmed official information (reviewed 2026-10-22)
 
@@ -129,4 +136,4 @@ No credentials or network are required. Fixtures are **synthetic**, not recorded
 - Publication calendar/timezone, weekends/holidays, future effective dates, revisions, historical completeness, limits, supported range size, token lifecycle, current legacy availability, and replacement API access are unverified. The historical 17:30 next-day availability note is not a publication timestamp and is not used by the code.
 - Data use and redistribution remain subject to institutional terms described in DATA_SOURCES.md; the repository's MIT license is for code, not a grant of rights to BCCR data.
 
-Before calling a future SDDE integration live-tested, implement its documented contract, supply credentials privately, obtain a successful authenticated response, reconcile a small date range against BCCR's official publication, and update these assumptions with actual evidence. Never commit credentials or raw responses containing them.
+Before calling the SDDE integration live-tested, supply credentials privately, obtain a successful authenticated response, reconcile a small date range against BCCR's official publication, and update these assumptions with actual evidence. Never commit credentials or raw responses containing them.
