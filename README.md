@@ -46,7 +46,7 @@ These are ordered milestones, not delivery-date commitments.
 
 ## Current project status
 
-**Documentation foundation; application not implemented.** The repository contains product documentation, an MIT license, and a `.gitignore`. No live collection, dashboard, alerts, historical validation, or notification integrations exist. No application tests or documentation-check configuration currently exist.
+**First BCCR collector implemented; live integration unverified.** A small Python CLI requests USD compra reference indicator 317 through the documented legacy XML service. It includes offline tests and [setup and usage instructions](docs/BCCR_COLLECTOR.md). BCCR has announced retirement of that service; current authenticated operation has not been demonstrated. No dashboard, database, alerts, predictions, Promerica or MONEX integrations exist.
 
 ## How we will build with Codex and GitHub
 

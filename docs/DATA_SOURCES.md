@@ -1,3 +1,7 @@
+## Collector verification update — 2026-10-22
+
+The first indicator 317 collector and offline tests are now implemented; see [BCCR collector setup, evidence and assumptions](BCCR_COLLECTOR.md). BCCR has announced legacy Web Service retirement on 2026-06-30. Legacy WSDL/operation pages returned 503 through the research web tool. No authenticated request has been attempted or succeeded. The historical research below must not be read as confirmation of current service availability.
+
 FX Lag Intelligence — Data source discovery
 Status: proposed documentation; researched 2026-10-22. No collection, predictive relationship, or production readiness is established.
 Repository and access status
