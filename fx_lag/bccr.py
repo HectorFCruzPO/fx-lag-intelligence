@@ -37,6 +37,10 @@ class ResponseError(CollectorError):
     """The response cannot be interpreted safely as indicator 317 data."""
 
 
+class ServiceFaultError(ResponseError):
+    """A recognized SOAP service fault, classified without echoing server text."""
+
+
 class NetworkError(CollectorError):
     """Transport, HTTP, or service availability failure."""
 
@@ -65,14 +69,43 @@ def xml_root(raw: bytes | str) -> ET.Element:
         raise ResponseError("BCCR returned invalid XML.") from None
 
 
+def raise_service_fault(root: ET.Element) -> None:
+    """Raise a fixed-message error for SOAP 1.1/1.2 faults; ignore detail payloads."""
+    fault = next((e for e in root.iter() if e.tag in (
+        f"{{{SOAP}}}Fault", "{http://www.w3.org/2003/05/soap-envelope}Fault",
+    )), None)
+    if fault is None:
+        return
+    # Only reason/code fields classify the fault. Detail can echo request tokens.
+    reasons = []
+    code = ""
+    for child in fault:
+        tag = local_name(child.tag)
+        if tag == "faultstring":
+            reasons.append(" ".join(child.itertext()))
+        elif tag == "Reason":
+            reasons.extend(" ".join(e.itertext()) for e in child if local_name(e.tag) == "Text")
+        elif tag == "faultcode":
+            code = (child.text or "").strip().rsplit(":", 1)[-1]
+        elif tag == "Code":
+            value = next((e for e in child if local_name(e.tag) == "Value"), None)
+            if value is not None:
+                code = (value.text or "").strip().rsplit(":", 1)[-1]
+    if auth_message(" ".join(reasons)):
+        raise AuthenticationError("BCCR rejected authentication; check BCCR_EMAIL and BCCR_TOKEN.") from None
+    if code in ("Client", "Sender"):
+        message = "BCCR SOAP request fault: the service rejected the request; verify the legacy operation and parameters."
+    elif code in ("Server", "Receiver"):
+        message = "BCCR SOAP service fault: the service could not process the request; legacy service availability needs verification."
+    else:
+        message = "BCCR returned a SOAP fault; service or request may be unsupported."
+    raise ServiceFaultError(message) from None
+
+
 def parse_response(raw: bytes, start: date, end: date, retrieved_at: str) -> dict:
     """Parse SOAP escaped XML or direct XML; report gaps without fabricating rates."""
     root = xml_root(raw)
-    fault = next((e for e in root.iter() if local_name(e.tag) == "Fault"), None)
-    if fault is not None:
-        if auth_message(" ".join(fault.itertext())):
-            raise AuthenticationError("BCCR rejected authentication; check BCCR_EMAIL and BCCR_TOKEN.")
-        raise ResponseError("BCCR returned a SOAP fault; service or request may be unsupported.")
+    raise_service_fault(root)
     wrapper = next((e for e in root.iter() if local_name(e.tag) in (METHOD + "Result", "string")), None)
     if wrapper is not None:
         if len(wrapper):
@@ -86,6 +119,7 @@ def parse_response(raw: bytes, start: date, end: date, retrieved_at: str) -> dic
                     raise AuthenticationError("BCCR rejected authentication; check BCCR_EMAIL and BCCR_TOKEN.")
                 raise ResponseError("BCCR returned an unexpected non-XML result.")
             root = xml_root(text)
+    raise_service_fault(root)
     rows = [e for e in root.iter() if local_name(e.tag) == "INGC011_CAT_INDICADORECONOMIC"]
     if not rows:
         if local_name(root.tag) not in ("Datos_de_INGC011_CAT_INDICADORECONOMIC", "NewDataSet", METHOD + "Result", "string"):
@@ -100,7 +134,7 @@ def parse_response(raw: bytes, start: date, end: date, retrieved_at: str) -> dic
             raw_date = fields["DES_FECHA"]
             if not re.fullmatch(r"\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})?)?", raw_date):
                 raise ValueError
-            effective = datetime.fromisoformat(raw_date).date() if "T" in raw_date else date.fromisoformat(raw_date)
+            effective = datetime.fromisoformat(raw_date.replace("Z", "+00:00")).date() if "T" in raw_date else date.fromisoformat(raw_date)
             rate = Decimal(fields["NUM_VALOR"])
             if not rate.is_finite() or rate <= 0 or not start <= effective <= end or effective.isoformat() in observations:
                 raise ValueError
@@ -158,17 +192,20 @@ def collect(start: date, end: date, name: str, timeout: float = 30) -> dict:
         if exc.code in (401, 403):
             raise AuthenticationError(f"HTTP {exc.code}: access rejected; check subscription credentials and access policy.") from None
         if exc.code == 500:
-            # SOAP 1.1 faults commonly arrive with HTTP 500.
+            # HTTP 500 is still a failure even if its body resembles valid data.
             try:
                 raw = exc.read(MAX_RESPONSE_BYTES + 1)
             except (OSError, HTTPException):
                 raise NetworkError("BCCR response was interrupted while reading an HTTP fault.") from None
+            finally:
+                exc.close()
+            if len(raw) > MAX_RESPONSE_BYTES:
+                raise ResponseError("BCCR HTTP 500 response exceeds the 2 MB safety limit.") from None
             try:
-                parse_response(raw, start, end, "")
-            except AuthenticationError:
-                raise
-            except CollectorError:
-                pass
+                root = xml_root(raw)
+            except ResponseError:
+                raise NetworkError("BCCR HTTP 500; response did not contain a readable SOAP fault.") from None
+            raise_service_fault(root)
         raise NetworkError(f"BCCR HTTP {exc.code}; request failed (legacy service may be unavailable).") from None
     except (URLError, OSError, HTTPException):
         raise NetworkError("Cannot reach BCCR: network, TLS, connection, or timeout failure.") from None
@@ -188,7 +225,7 @@ def iso_date(value: str) -> date:
 
 
 def main(argv=None) -> int:
-    parser = argparse.ArgumentParser(description="Retrieve BCCR USD compra (317) from the documented legacy XML service.")
+    parser = argparse.ArgumentParser(description="Legacy BCCR USD compra (317) prototype; offline-tested only, not a verified live integration.")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--date", type=iso_date, help="One effective date, YYYY-MM-DD")
     group.add_argument("--start", type=iso_date, help="First effective date, YYYY-MM-DD")

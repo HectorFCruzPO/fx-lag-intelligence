@@ -1,10 +1,10 @@
 # FX Lag Intelligence — Product Requirements Document
 
-Status: initial proposal for human review. No application functionality is implemented.
+Status: product proposal for human review. The full MVP is not implemented. A [legacy BCCR collector prototype](BCCR_COLLECTOR.md) is implemented and tested offline; no live integration is verified.
 
 ## Product vision
 
-Help a USD seller in Costa Rica make better-informed conversion timing decisions through fresh, traceable rate observations and explainable alerts. The product monitors Banco Promerica USD compra, BCCR compra, and MONEX market data.
+Help a USD seller in Costa Rica make better-informed conversion timing decisions through fresh, traceable rate observations and explainable alerts. The planned product will monitor Banco Promerica USD compra, BCCR compra, and MONEX market data.
 
 The hypothesis is that some meaningful MONEX decreases may precede Promerica compra decreases; increases may sometimes make waiting beneficial. Neither a causal relationship nor a known adjustment lag is established. The product must not promise a future rate, optimal timing, or guaranteed savings.
 
@@ -41,7 +41,7 @@ The schedule is every 15 days, not necessarily twice per calendar month. The use
 
 ### Out of scope
 
-Automated currency trading, bank-account access, guaranteed forecasts, causal claims, a claimed fixed adjustment lag, multi-user commercial operations, and machine-learning prediction are outside the MVP. This initial task delivers documentation only: no application code, deployments, or paid-service configuration.
+Automated currency trading, bank-account access, guaranteed forecasts, causal claims, a claimed fixed adjustment lag, multi-user commercial operations, and machine-learning prediction are outside the MVP. The original PRD task delivered documentation only. The current repository also includes a legacy BCCR collector prototype tested offline; deployments, paid services and the full MVP remain unimplemented.
 
 ## Data sources and discovery decisions
 
@@ -142,4 +142,4 @@ A successful pilot demonstrates reliable, understandable information. It may fin
 
 ## Development and human review
 
-Use the [Codex and GitHub workflow](../README.md#how-we-will-build-with-codex-and-github): small scoped tasks, separate branches, descriptive commits, pull requests with validation evidence, and human review before merging. The Product Owner reviews business meaning and unresolved settings; technical review checks data semantics, calculations, privacy, and delivery behavior. Changes to prediction claims require reviewed historical evidence. This documentation PR must remain unmerged for human review.
+Use the [Codex and GitHub workflow](../README.md#how-we-will-build-with-codex-and-github): small scoped tasks, separate branches, descriptive commits, pull requests with validation evidence, and human review before merging. The Product Owner reviews business meaning and unresolved settings; technical review checks data semantics, calculations, privacy, and delivery behavior. Changes to prediction claims require reviewed historical evidence. Implementation PRs remain subject to human review before merging.

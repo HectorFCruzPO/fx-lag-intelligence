@@ -21,7 +21,7 @@ Market movements are not assumed to cause bank rate changes. No adjustment lag, 
 
 Detailed requirements and acceptance criteria are in the [Product Requirements Document](docs/PRD.md).
 
-## Proposed technology stack — not implemented
+## Proposed product architecture
 
 | Area | Candidate | Purpose |
 | --- | --- | --- |
@@ -31,7 +31,7 @@ Detailed requirements and acceptance criteria are in the [Product Requirements D
 | Notifications | WhatsApp Business Platform and Web Push APIs | Opt-in delivery through both channels |
 | Collaboration and checks | GitHub, Codex, GitHub Actions | Reviewed changes and automated validation |
 
-These are proposals, not installed dependencies or service commitments. Source access, hosting, provider pricing, and security design require investigation before implementation. No paid services are configured in this phase. AI assists development; the MVP does not require an AI prediction model.
+This full product architecture remains proposed; only the standalone legacy Python prototype below is implemented. These candidates are not installed dependencies or service commitments. Source access, hosting, provider pricing, and security design require investigation before implementation. No paid services are configured in this phase. AI assists development; the MVP does not require an AI prediction model.
 
 ## Development roadmap
 
@@ -46,7 +46,7 @@ These are ordered milestones, not delivery-date commitments.
 
 ## Current project status
 
-**First BCCR collector implemented; live integration unverified.** A small Python CLI requests USD compra reference indicator 317 through the documented legacy XML service. It includes offline tests and [setup and usage instructions](docs/BCCR_COLLECTOR.md). BCCR has announced retirement of that service; current authenticated operation has not been demonstrated. No dashboard, database, alerts, predictions, Promerica or MONEX integrations exist.
+**Legacy BCCR prototype implemented and tested offline; no verified live integration.** The Python CLI constructs requests for USD compra reference indicator 317 through the legacy XML service. BCCR announced that service's retirement for 2026-06-30, so this is not the intended production integration. [Setup, usage and official-source verification](docs/BCCR_COLLECTOR.md) distinguish this prototype from the documented replacement SDDE API, which is not implemented or authenticated here. No dashboard, database, alerts, predictions, Promerica or MONEX integrations exist.
 
 ## How we will build with Codex and GitHub
 
@@ -54,9 +54,9 @@ These are ordered milestones, not delivery-date commitments.
 2. Codex inspects the repository and proposes or implements a scoped change on a **branch**: a separate line of work that leaves `main` unchanged.
 3. Codex checks the diff (the exact changed lines) and runs relevant checks. A **commit** saves a named snapshot of related changes in Git history.
 4. A **pull request (PR)** proposes bringing the branch into `main`. It presents the changes, reasons, and validation results for discussion.
-5. A human reviews correctness, product intent, evidence, costs, and risks; requests revisions where necessary; and decides whether to merge. Codex does not merge this initial documentation PR.
+5. A human reviews correctness, product intent, evidence, costs, and risks; requests revisions where necessary; and decides whether to merge. Codex leaves PRs unmerged for human review.
 
-Keep secrets out of Git. Record assumptions explicitly, use synthetic data for early tests, and distinguish proposed features from working functionality. Application work and paid-service setup are outside this documentation task.
+Keep secrets out of Git. Record assumptions explicitly, use synthetic data for early tests, and distinguish proposed features from working functionality. The only current implementation is the legacy collector prototype; full application development and paid-service setup remain future work.
 
 ## Learning objectives
 

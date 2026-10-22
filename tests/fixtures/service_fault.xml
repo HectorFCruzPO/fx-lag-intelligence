@@ -1,0 +1,9 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <soap:Fault>
+      <faultcode>soap:Server</faultcode>
+      <faultstring>Service unavailable. confidential-reason</faultstring>
+      <detail><Token>fake-secret</Token><CorreoElectronico>synthetic@example.invalid</CorreoElectronico><trace>confidential-detail</trace></detail>
+    </soap:Fault>
+  </soap:Body>
+</soap:Envelope>
