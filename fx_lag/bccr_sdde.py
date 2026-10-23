@@ -1,6 +1,6 @@
 """USD compra (317) adapter for BCCR's documented SDDE REST API.
 
-The wire contract comes from the official SDDE guide, pages 19â€“20.
+The wire contract comes from the official SDDE guide, pages 19-20.
 Synthetic tests verify the implementation; authenticated behavior is unverified.
 """
 from __future__ import annotations
