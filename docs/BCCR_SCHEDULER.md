@@ -24,7 +24,7 @@ Use the **scheduled runner** for automation. The standalone `python -m fx_lag.bc
 - Be logged into the Windows account that creates the task, with the laptop **awake and online**. Locking the screen is okay; logging out, sleeping or shutting down can miss runs. The task does not wake the laptop and does not catch up missed runs.
 - Windows timezone ID must be **`Central America Standard Time`** (Costa Rica, UTC−06:00). Installer and wrapper reject other timezone settings instead of changing your computer's clock. The Python guard independently uses UTC−06:00 year-round. If Costa Rica changes its timezone policy, the code must be updated.
 - The repository must stay at the installed location. Reinstall if you move the repository, change Python paths, or change Windows timezone.
-- These PowerShell scripts were reviewed against [Microsoft's task trigger documentation](https://learn.microsoft.com/en-us/powershell/module/scheduledtasks/new-scheduledtasktrigger) and [task principal documentation](https://learn.microsoft.com/en-us/powershell/module/scheduledtasks/new-scheduledtaskprincipal). **Windows registration, DPAPI and scheduled execution have not been run in the Linux development environment. They require validation on your laptop.** The schedule/429 logic is covered by offline Python tests; no authenticated scheduled request was made here.
+- These PowerShell scripts were reviewed against [Microsoft's task trigger documentation](https://learn.microsoft.com/en-us/powershell/module/scheduledtasks/new-scheduledtasktrigger) and [task principal documentation](https://learn.microsoft.com/en-us/powershell/module/scheduledtasks/new-scheduledtaskprincipal). **The owner reported successful Windows token setup, task registration and one real scheduled collection on 2026-10-23; see the validation record below.** These Windows steps were not executed in the Linux development environment. The schedule/429 logic is covered by offline Python tests; a real HTTP 429 pause and unattended resumption have not been observed.
 
 ## Step-by-step setup
 
@@ -99,6 +99,48 @@ The runner records the latest actual attempt (`last_attempt`, `last_slot`, `stat
 
 The final 17:00 launch has a one-minute grace (17:00:00 through 17:00:59). A launch after 17:01 is skipped. Delayed runs within the window use their current half-hour slot rather than backfilling earlier slots. Attempts never start before 09:00; a response already in flight may finish just after 17:00.
 
+## Owner-reported Windows validation: 2026-10-23
+
+The owner installed this branch on their Windows laptop and shared terminal output in the development conversation. The protected-token script confirmed local storage, and the installer reported:
+
+```text
+Task registered: FX Lag Intelligence - BCCR. Disabled: False. No request was executed by setup.
+```
+
+The owner's subsequent Task Scheduler output showed:
+
+| Field | Owner-supplied value (Costa Rica local time) |
+| --- | --- |
+| LastRunTime | 2026-10-23 17:00:00 (Friday) |
+| LastTaskResult | 0 |
+| NextRunTime | 2026-10-26 09:00:00 (Monday) |
+
+Exit code 0 alone can mean a skip, so the owner also supplied the resulting schedule state:
+
+```json
+{
+  "version": 1,
+  "last_slot": "2026-10-23T17:00:00-06:00",
+  "last_attempt": "2026-10-23T23:00:01.245707Z",
+  "status": "saved",
+  "blocked_until": null
+}
+```
+
+The CSV inspection showed a new observation, with earlier manually collected rows still present:
+
+| Effective date | Rate (CRC/USD) | Retrieved at (UTC) |
+| --- | --- | --- |
+| 2026-10-22 | 453.45000000 | 2026-10-23T22:04:57.090687Z |
+| 2026-10-22 | 453.45000000 | 2026-10-23T22:06:16.854805Z |
+| 2026-10-23 | 452.44000000 | 2026-10-23T23:00:02.077501Z |
+
+Together, the owner-supplied task result, `saved` state and new CSV row support **one successful real Windows scheduled request and save**, using the protected-token wrapper. This is not an authenticated request independently executed by the assistant. Neither the token nor the protected token file was shared, inspected or committed. The October 23 rate has not been separately reconciled against BCCR's published history in this conversation.
+
+The owner reported the local scheduler tests passed, without supplying an exact test count. That report is separate from the development run of all **97 offline Python tests**, which passed before this documentation update. The owner also showed a clean working tree and confirmed that the CSV, protected token and state paths were ignored by Git.
+
+**Remaining live checks:** Monday's `NextRunTime` is a scheduled future run, not evidence that Monday execution or a weekend pause/resumption has already occurred. `blocked_until: null` means this sample did not exercise a rate-limit response. HTTP 429 pause, longer `Retry-After`, next-day resumption, reboot recovery, repeated unattended runs and broader reliability remain tested offline or unverified live. No deliberate rate-limit probing is needed. Do not claim general production readiness from this first successful run.
+
 ## Pause, remove and recover
 
 Disable/enable future triggers without changing the 429 pause:
@@ -118,4 +160,4 @@ Keep `data/bccr-schedule.json` and the CSV when reinstalling. **Do not delete/ed
 
 For recovery, first disable the task, confirm no collection process is running, back up state/history, and inspect the error. Restore a trusted state that preserves any 429 deadline. If an interrupted attempt has unknown outcome, do not immediately reset it; determine a safe restart time before repairing state. Share sanitized status/errors for help, never the token or DPAPI file. Disk-write failures can leave a `.tmp` file. The runner persists `started` before contacting BCCR so failure to save a later 429 state remains fail-closed.
 
-Use the same schedule state/CSV paths for every scheduled launch. The state/locks are intended for one local computer and cooperating processes, not shared network storage or protection against deliberate manual modification. Credential decryption and Windows task registration still need local end-to-end verification before claiming unattended operation works.
+Use the same schedule state/CSV paths for every scheduled launch. The state/locks are intended for one local computer and cooperating processes, not shared network storage or protection against deliberate manual modification. The first owner-reported end-to-end Windows run is recorded below. Repeated unattended operation, reboot recovery and a real HTTP 429 pause/resumption still require live observation.
