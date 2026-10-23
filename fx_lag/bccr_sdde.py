@@ -1,7 +1,8 @@
 """USD compra (317) adapter for BCCR's documented SDDE REST API.
 
 The wire contract comes from the official SDDE guide, pages 19-20.
-Synthetic tests verify the implementation. The owner reported one successful\nauthenticated single-date query; broader live behavior remains unverified.
+Synthetic tests verify the implementation. The owner reported successful
+single-date, weekday-range and weekend-range queries; broader validation is pending.
 """
 from __future__ import annotations
 
@@ -17,6 +18,8 @@ import sys
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import HTTPRedirectHandler, Request, build_opener
+
+from .csv_history import HistoryError, save_observations
 
 # GE spelling used in the owner's successful query; guide casing varies.
 BASE_URL = "https://apim.bccr.fi.cr/SDDE/api/Bccr.GE.SDDE.Publico.Indicadores.API"
@@ -201,21 +204,27 @@ def collect(start: date, end: date, timeout: float = 30) -> dict:
 
 
 def main(argv=None) -> int:
-    parser = argparse.ArgumentParser(description="BCCR SDDE USD compra (317) collector; one live query reported, broader validation pending.")
+    parser = argparse.ArgumentParser(description="BCCR SDDE USD compra (317) collector; small live samples reported, broader validation pending.")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--date", type=iso_date, help="One effective date, YYYY-MM-DD")
     group.add_argument("--start", type=iso_date, help="First effective date, YYYY-MM-DD")
     parser.add_argument("--end", type=iso_date, help="Last effective date, inclusive; required with --start")
     parser.add_argument("--timeout", type=float, default=30, help="Socket timeout in seconds (default: 30)")
+    parser.add_argument("--csv", metavar="PATH", help="Save each retrieval to CSV; skip only exact duplicate observations")
     args = parser.parse_args(argv)
     if bool(args.start) != bool(args.end):
         parser.error("Use --start and --end together, or --date alone.")
     try:
         result = collect(args.date or args.start, args.date or args.end, args.timeout)
-    except CollectorError as exc:
+        saved = None
+        if args.csv is not None:
+            saved = save_observations(args.csv, result["observations"], source_url=ENDPOINT)
+    except (CollectorError, HistoryError) as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 1
     print(json.dumps(result, indent=2))
+    if saved is not None:
+        print(f"CSV history: {saved['added']} added, {saved['skipped']} already saved.", file=sys.stderr)
     if result["missing_dates"]:
         print("Warning: requested dates are missing; see missing_dates. No rates were filled.", file=sys.stderr)
     return 0
