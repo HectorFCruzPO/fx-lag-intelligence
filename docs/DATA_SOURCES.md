@@ -6,6 +6,10 @@ Status: historical discovery notes researched 2026-10-22, with a current collect
 
 The [SDDE REST adapter](BCCR_SDDE.md) is implemented and tested offline. The [legacy collector prototype](BCCR_COLLECTOR.md) remains intact and is not the intended production integration. The linked review records BCCR's announced 2026-06-30 retirement, the separately located official replacement SDDE API guide, inaccessible pages and remaining uncertainties. The project owner subsequently shared successful authenticated SDDE single-date, weekday-range and weekend-range queries on 2026-10-23 and confirmed that the range rates matched BCCR's official history; see the [validation record](BCCR_SDDE.md#reported-live-query-2026-10-23). The legacy interface remains unvalidated. The following original discovery notes describe historical evidence, not current service availability.
 
+## Current three-source research decision
+
+The owner selected Promerica public branch compra for research even when it differs from the app. See [MONEX and three-source research](MONEX_RESEARCH.md) for the weighted-average candidate, official sources, timestamp limits and unresolved SDDE mapping. Earlier channel-applicability questions below concern executable-price claims, not a prerequisite for studying the selected public series. No Promerica or MONEX collector has been implemented.
+
 ## Repository and access status
 
 At the time of the original discovery, the local checkout was stale: branch work, HEAD 7c122941cbe22d11eaf23ad7c047b8b0dd28b2dd, contained the original short README and no PRD. GitHub’s main was read directly through the GitHub connector before source research:

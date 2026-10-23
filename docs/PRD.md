@@ -6,7 +6,7 @@ Status: product proposal for human review. The full MVP is not implemented. A [B
 
 Help a USD seller in Costa Rica make better-informed conversion timing decisions through fresh, traceable rate observations and explainable alerts. The planned product will monitor Banco Promerica USD compra, BCCR compra, and MONEX market data.
 
-The hypothesis is that some meaningful MONEX decreases may precede Promerica compra decreases; increases may sometimes make waiting beneficial. Neither a causal relationship nor a known adjustment lag is established. The product must not promise a future rate, optimal timing, or guaranteed savings.
+The research hypothesis is that MONEX movements may precede BCCR reference compra movements and then Promerica public branch compra movements. Measure all three pairwise relationships and observed orderings, including opposite-direction moves and no follow-through. Increases and decreases both matter; the proposed sequence is not a required matching rule. Neither a causal relationship nor a known adjustment lag is established. The product must not promise a future rate, optimal timing, or guaranteed savings.
 
 ## Target user and primary use case
 
@@ -34,7 +34,7 @@ The schedule is every 15 days, not necessarily twice per calendar month. The use
 | R-3 | Store timestamps in UTC; display a labeled timezone, defaulting to America/Costa_Rica. Show source time and retrieval time separately. Never present retrieval time as publication time. |
 | R-4 | Configure freshness limits per source based on verified publication cadence and market calendar. Detect missing, stale, invalid, future-dated, and out-of-order data; expose degraded status and suppress affected actionable alerts. |
 | R-5 | Evaluate the deterministic rules below with configurable thresholds, windows, and recorded rule versions. Settings must be reviewed before live alerting. |
-| R-6 | Show estimated Promerica proceeds, observed changes, and separately labeled hypothetical CRC impacts for USD 3,000; allow future amount configuration while preserving this default. |
+| R-6 | Show labeled public-rate proceeds scenarios, observed changes, and separately labeled hypothetical CRC impacts for USD 3,000; allow future amount configuration while preserving this default. |
 | R-7 | Support both WhatsApp and web push, with explicit opt-in, channel preferences, revocation, delivery status, bounded retries, and deduplication. A silent failed delivery must not be recorded as successful. |
 | R-8 | Show current observations, freshness, recent movements, alert explanations, and history. Allow configuration of the 15-day conversion schedule and deadline. |
 | R-9 | Retain observation IDs, comparison baselines, rule versions, decisions, and delivery attempts so each alert can be reconstructed. Keep credentials and phone/push subscription details protected and out of Git. |
@@ -45,11 +45,11 @@ Automated currency trading, bank-account access, guaranteed forecasts, causal cl
 
 ## Data sources and discovery decisions
 
-The owner confirmed that their USD 3,000 sales normally use Promerica online banking or the mobile app. The [Promerica access review](PROMERICA_SOURCES.md) tracks whether a permitted public or authorized feed matches that channel; public branch-rate equivalence is not assumed.
+The owner sells through online banking/mobile but explicitly selected the public branch compra for published-rate research, whether or not it matches the app. The [Promerica access review](PROMERICA_SOURCES.md) tracks permitted access. The [three-source research plan](MONEX_RESEARCH.md) defines the MONEX candidate and observation-time limits. Channel equivalence is not a collection prerequisite; it remains necessary before claiming executable proceeds.
 
 | Source | Intended use | Required verification before implementation |
 | --- | --- | --- |
-| Banco Promerica Costa Rica USD compra | Retail bank buying rate relevant to selling USD | Official endpoint or page, allowed collection method, rate applicability by channel/amount, effective timestamp, refresh cadence, fees and executable-quote limitations |
+| Banco Promerica Costa Rica USD compra | Selected public branch USD buying rate for research | Official page/feed, allowed collection method, timestamps and refresh cadence; app applicability and fees are separate execution-price questions |
 | BCCR compra | Official reference context | Exact reference series and definition, permitted API/feed access, authentication if any, publication calendar, historical coverage and revisions |
 | MONEX market data published by BCCR | Detect meaningful market movements and support historical comparison | Exact statistic/series (for example, a published weighted average if available), aggregation interval, units, session calendar, publication delay, access method and historical coverage |
 
@@ -61,7 +61,7 @@ Choose and document one consistent MONEX statistic before alert implementation; 
 
 Each rule must record its comparison window, source-specific freshness limit, maximum allowed cross-source time skew, and baseline selection. Numeric values remain open until source cadence is verified and the Product Owner reviews them; live rules remain disabled until these settings exist.
 
-Compare a current MONEX observation with the latest eligible observation at or before the configured window boundary from the same series and aggregation interval. Require the baseline to fall within a configured boundary tolerance; otherwise suppress the rule. Use comparable Promerica observations at those endpoints to determine whether the bank has already moved. BCCR is context, not evidence that Promerica has changed.
+Compare a current MONEX observation with the latest eligible observation at or before the configured window boundary from the same series and aggregation interval. Require the baseline to fall within a configured boundary tolerance; otherwise suppress the rule. Use comparable Promerica observations at those endpoints to determine whether the bank has already moved. BCCR is a separately tracked research series, not evidence that Promerica has changed. Research measures MONEX–BCCR, BCCR–Promerica and MONEX–Promerica timing without requiring that sequence. The alert rules below remain future proposals, pending evidence.
 
 All three current inputs must pass their source-specific freshness and quality checks; baseline eligibility is checked separately. An unknown source timestamp cannot establish freshness unless a documented, reviewed source-specific policy provides reliable effective-period evidence. Refetching an unchanged old publication does not make it fresh. Closed-market periods may be shown as last available data but must not generate new movement alerts from old observations. Revisions are recorded and must not silently rewrite prior alert evidence.
 
@@ -82,11 +82,11 @@ WhatsApp requires user consent and verification of current provider/template rul
 
 Use decimal arithmetic, preserve source precision for comparisons, and round displayed CRC amounts to two decimals. State that estimates exclude fees unless verified fees are explicitly included.
 
-- Estimated gross proceeds: `USD amount × current Promerica compra`.
+- Public-rate gross scenario: `USD amount × current Promerica public branch compra`. This is not an executable online/app proceeds estimate without verified quote applicability.
 - Observed gross proceeds change: `USD amount × (current Promerica compra - baseline Promerica compra)`.
 - Hypothetical market-movement impact: `USD amount × delta_MONEX`, labeled **scenario only, assuming an equal-sized Promerica movement**. This is neither a forecast nor an expected loss/gain.
 
-Synthetic example: at Promerica compra of CRC 500/USD, selling USD 3,000 yields CRC 1,500,000 before fees. An actual Promerica decrease to 499 reduces proceeds by CRC 3,000. A MONEX decrease of 1 CRC/USD also gives a CRC -3,000 hypothetical scenario, but does not establish any Promerica change. BCCR compra is not used to calculate executable Promerica proceeds.
+Synthetic example: at Promerica compra of CRC 500/USD, the public-rate scenario for USD 3,000 is CRC 1,500,000 before fees; the executable app quote may differ. An actual Promerica decrease to 499 reduces proceeds by CRC 3,000. A MONEX decrease of 1 CRC/USD also gives a CRC -3,000 hypothetical scenario, but does not establish any Promerica change. BCCR compra is not used to calculate executable Promerica proceeds.
 
 ## Acceptance criteria
 
@@ -99,7 +99,7 @@ These are future implementation checks, not tests that have already passed.
 | AC-3 | Given eligible data, configured `T_down = 1`, `T_up = 1`, and `I_min = 3000` as synthetic test settings, a MONEX move of -1 with unchanged Promerica produces one primary warning; +1 produces one secondary notice. A move of magnitude 0.99 produces neither. These are test fixtures, not production defaults. |
 | AC-4 | Given a matching Promerica decrease already occurred, the decrease is shown as observed history and no advance decrease warning is issued. The equivalent condition applies to increases; a passed deadline prevents a suggestion to wait. |
 | AC-5 | Repeated polls, window shifts within the same episode, retries, and a restart produce at most one logical alert per event and one intended delivery per enabled channel. Recovery plus cooldown permits a new episode. Ambiguous provider outcomes remain visible. |
-| AC-6 | For USD 3,000 at Promerica compra 500, gross proceeds are CRC 1,500,000.00; an actual change to 499 gives CRC -3,000.00. A MONEX-only -1 change is labeled hypothetical and does not change displayed observed bank proceeds. |
+| AC-6 | For USD 3,000 at Promerica compra 500, the public-rate gross scenario is CRC 1,500,000.00, not a guaranteed app quote; an actual change to 499 gives CRC -3,000.00. A MONEX-only -1 change is labeled hypothetical and does not change displayed observed bank proceeds. |
 | AC-7 | With explicit consent, both WhatsApp and web push can receive a test alert in their supported test environments, with evidence links and correct delivery state. Revoked channels receive no further sends; a channel failure does not erase the alert or block the other channel. |
 | AC-8 | From any alert, a reviewer can reconstruct the input observations, baseline, thresholds, rule version, freshness decision, CRC calculation, and delivery attempts. No message claims causality or a validated lag without reviewed evidence. |
 | AC-9 | A next conversion date advances by 15 calendar days from the configured anchor; schedule and deadline display in the labeled user timezone. Thresholds, dates, and channel preferences persist. |

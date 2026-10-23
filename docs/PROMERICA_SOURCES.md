@@ -6,7 +6,7 @@ Research date: 2026-10-23 (Costa Rica). Status: **discovery only; no Promerica c
 
 The owner confirmed that they normally sell USD through **Promerica online banking or its mobile app**, not at a branch. The project use case is selling USD 3,000 every 15 days for CRC. Compra is the bank buying the owner's dollars; venta is the opposite direction.
 
-**Decision:** do not treat the public branch quote as the owner's executable online/app rate yet. No documented public exchange-rate API/feed, automation permission, numeric request limit, update cadence or USD 3,000 channel applicability was verified in the material reviewed. This does not establish that a supported feed is unavailable. Ask the bank for the applicable source and permitted method before implementing scheduled collection.
+**Owner decision (2026-10-23):** track the public branch USD/CRC compra as Promerica's published research series. Matching the online/app quote is not a prerequisite for this study. Keep it labeled as a public branch quote; it is not a verified executable online/app price. No documented public exchange-rate API/feed, automation permission, numeric request limit, update cadence or USD 3,000 channel applicability was verified in the material reviewed. This does not establish that a supported feed is unavailable. Resolve the permitted method before scheduled collection; app applicability matters only for future executable-proceeds claims. See the [three-source research plan](MONEX_RESEARCH.md).
 
 The BCCR collector, protected token, CSV and weekday task are unchanged by this research. Do not reuse BCCR indicator 317 as a Promerica rate.
 
@@ -54,10 +54,10 @@ This is a research lead only. No current Promerica bank-specific SDDE code, payl
 
 ## Next evidence to obtain
 
-1. Ask Promerica which supported source represents the owner's channel and permits automated reading/retention at the chosen interval. Record the written answer, date and applicable conditions without private account details.
-2. Once a candidate is confirmed, the owner can manually compare its compra quote against the quote shown in their usual online/app channel at approximately the same time. Record amount USD 3,000, channel, date, time/timezone, rate and any visible fee/applicability notes. Do not execute a trade solely for this check or share account numbers, balances, passwords, OTPs, cookies or session tokens.
+1. Ask Promerica for a supported source for the selected public branch compra series and the conditions for automated reading/retention at the chosen interval. Record the written answer, date and applicable conditions without private account details.
+2. Optional later execution-price validation, not a gate for public-rate research: the owner can manually compare its compra quote against the quote shown in their usual online/app channel at approximately the same time. Record amount USD 3,000, channel, date, time/timezone, rate and any visible fee/applicability notes. Do not execute a trade solely for this check or share account numbers, balances, passwords, OTPs, cookies or session tokens.
 3. Repeat a small simultaneous comparison at several times. Agreement at one time is useful evidence but not proof of permanent equality or an executable-price guarantee.
-4. Choose a clearly labeled series identity before coding: public branch quote, public general quote, authorized channel-specific quote or owner-recorded quote. Do not mix them into one history.
+4. Use the selected public branch compra identity consistently. An authorized channel-specific quote would be a separate series, not a replacement mixed into its history.
 5. Implement the smallest adapter only after the access/mapping questions are resolved. Use synthetic tests first. Keep the existing BCCR task independent and do not enable actionable cross-source alerts while required inputs or freshness are unverified.
 
 If a supported automated source cannot yet be established, manual owner-recorded quotes can support an explicitly labeled research sample. No manual-entry feature was built in this discovery step.
@@ -70,7 +70,7 @@ Suggested inquiry, without private account or credential information:
 
 > Hola. Soy cliente y normalmente vendo USD 3.000 por colones mediante Promerica en Línea o la app. Estoy preparando una herramienta personal de consulta; no realizaría transacciones automáticas.
 >
-> ¿Qué tipo de cambio de compra publicado corresponde a ese canal y monto? ¿Es el mismo de la página pública o de sucursales, o pueden aplicar precios preferenciales, negociados o comisiones?
+> Para este estudio quiero seguir el tipo de cambio de compra de la página pública de sucursales, aunque difiera de la app. ¿Cuál es la fuente oficial de esa serie?
 >
 > ¿Existe una API, archivo o fuente oficial autorizada para consultar automáticamente esa cotización? Si no, ¿permiten consultar la página pública y guardar observaciones localmente para comparación personal? Deseo conocer los límites y si una consulta cada 30 minutos es permitida, antes de programarla.
 >
