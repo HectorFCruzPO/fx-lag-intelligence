@@ -1,7 +1,7 @@
 """USD compra (317) adapter for BCCR's documented SDDE REST API.
 
 The wire contract comes from the official SDDE guide, pages 19-20.
-Synthetic tests verify the implementation; authenticated behavior is unverified.
+Synthetic tests verify the implementation. The owner reported one successful\nauthenticated single-date query; broader live behavior remains unverified.
 """
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
-# Section 1.3 base URL; its Ge/GE capitalization varies elsewhere in the guide.
+# GE spelling used in the owner's successful query; guide casing varies.
 BASE_URL = "https://apim.bccr.fi.cr/SDDE/api/Bccr.GE.SDDE.Publico.Indicadores.API"
 ENDPOINT = BASE_URL + "/indicadoresEconomicos/317/series"
 MAX_RESPONSE_BYTES = 2_000_000
@@ -168,7 +168,8 @@ def collect(start: date, end: date, timeout: float = 30) -> dict:
         "fechaFin": end.isoformat().replace("-", "/"), "idioma": "ES",
     })
     request = Request(ENDPOINT + "?" + query, headers={
-        "Authorization": "Bearer " + token, "Accept": "application/json", "User-Agent": "Mozilla/5.0",
+        "Authorization": "Bearer " + token, "Accept": "application/json",
+        "User-Agent": "Mozilla/5.0",
     }, method="GET")
     try:
         with build_opener(NoRedirect()).open(request, timeout=timeout) as response:
@@ -200,7 +201,7 @@ def collect(start: date, end: date, timeout: float = 30) -> dict:
 
 
 def main(argv=None) -> int:
-    parser = argparse.ArgumentParser(description="BCCR SDDE USD compra (317) collector; authenticated live operation remains unverified.")
+    parser = argparse.ArgumentParser(description="BCCR SDDE USD compra (317) collector; one live query reported, broader validation pending.")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--date", type=iso_date, help="One effective date, YYYY-MM-DD")
     group.add_argument("--start", type=iso_date, help="First effective date, YYYY-MM-DD")

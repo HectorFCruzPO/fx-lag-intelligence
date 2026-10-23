@@ -46,7 +46,7 @@ These are ordered milestones, not delivery-date commitments.
 
 ## Current project status
 
-**BCCR SDDE REST adapter implemented and tested offline; no verified live integration.** The new Python CLI requests USD compra reference indicator 317 using documented Bearer authentication. See [SDDE setup and usage](docs/BCCR_SDDE.md) and the [official-source review](docs/BCCR_COLLECTOR.md). The legacy SOAP prototype remains intact; BCCR announced its service's retirement for 2026-06-30, so it is not the intended production integration. Neither adapter has completed a successful authenticated request. No dashboard, database, alerts, predictions, Promerica or MONEX integrations exist.
+**BCCR SDDE REST adapter tested offline, with one successful authenticated query reported by the project owner.** The new Python CLI requests USD compra reference indicator 317 using documented Bearer authentication. See [SDDE setup and usage](docs/BCCR_SDDE.md) and the [official-source review](docs/BCCR_COLLECTOR.md). The legacy SOAP prototype remains intact; BCCR announced its service's retirement for 2026-06-30, so it is not the intended production integration. The owner shared a successful SDDE query for 2026-10-22; broader live behavior and independent rate reconciliation remain unverified. The legacy adapter has no authenticated validation. No dashboard, database, alerts, predictions, Promerica or MONEX integrations exist.
 
 ## How we will build with Codex and GitHub
 

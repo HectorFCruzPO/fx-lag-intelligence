@@ -1,6 +1,6 @@
 # FX Lag Intelligence — Product Requirements Document
 
-Status: product proposal for human review. The full MVP is not implemented. A [BCCR SDDE adapter](BCCR_SDDE.md) and [legacy prototype](BCCR_COLLECTOR.md) are implemented and tested offline; no live integration is verified.
+Status: product proposal for human review. The full MVP is not implemented. A [BCCR SDDE adapter](BCCR_SDDE.md) and [legacy prototype](BCCR_COLLECTOR.md) are implemented and tested offline. The project owner reported one successful authenticated SDDE single-date query; broader live validation remains pending.
 
 ## Product vision
 

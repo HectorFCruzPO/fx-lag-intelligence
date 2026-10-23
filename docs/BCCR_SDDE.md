@@ -1,6 +1,6 @@
 # BCCR SDDE USD compra collector
 
-The SDDE collector is a standalone Python CLI for **BCCR USD compra reference indicator 317**, in CRC per USD. Its REST request and parser are implemented and tested offline. **No authenticated live request has been attempted or succeeded.** It is not yet a verified live integration or production-ready collector. It does not fall back to the [legacy prototype](BCCR_COLLECTOR.md#status-legacy-prototype-not-a-production-integration).
+The SDDE collector is a standalone Python CLI for **BCCR USD compra reference indicator 317**, in CRC per USD. Its REST request and parser are implemented and tested offline. **The project owner shared output from one successful authenticated single-date query on 2026-10-23.** Broader live behavior and production readiness remain unverified. It does not fall back to the [legacy prototype](BCCR_COLLECTOR.md#status-legacy-prototype-not-a-production-integration).
 
 ## Setup
 
@@ -12,7 +12,7 @@ Use Python **3.10 or newer**. The collector and tests use the standard library, 
    ```sh
    git clone https://github.com/HectorFCruzPO/fx-lag-intelligence.git
    cd fx-lag-intelligence
-   git switch feat/bccr-sdde-api
+   git switch fix/bccr-sdde-live-validation
    python --version
    ```
 
@@ -64,7 +64,7 @@ Synthetic output, **not a real BCCR observation**:
     {
       "source": "BCCR",
       "interface": "SDDE",
-      "source_url": "https://apim.bccr.fi.cr/SDDE/api/Bccr.Ge.SDDE.Publico.Indicadores.API/indicadoresEconomicos/317/series",
+      "source_url": "https://apim.bccr.fi.cr/SDDE/api/Bccr.GE.SDDE.Publico.Indicadores.API/indicadoresEconomicos/317/series",
       "indicator": 317,
       "rate": "502.12000",
       "units": "CRC/USD",
@@ -80,7 +80,7 @@ Synthetic output, **not a real BCCR observation**:
 
 ## Wire contract and validation policy
 
-The [official SDDE technical guide](https://gee.bccr.fi.cr/indicadoreseconomicos/Documentos/DocumentosMetodologiasNotasTecnicas/Estandar_API_SDDE.pdf), section 1.3 and pages 19–20, documents the REST series route and JSON example used here. The implemented URL uses its section 1.3 spelling, with query parameters `fechaInicio`, `fechaFin` formatted `yyyy/mm/dd` and `idioma=ES`. Authentication is only `Authorization: Bearer <token>` over verified HTTPS.
+The [official SDDE technical guide](https://gee.bccr.fi.cr/indicadoreseconomicos/Documentos/DocumentosMetodologiasNotasTecnicas/Estandar_API_SDDE.pdf), section 1.3 and pages 19–20, documents the REST series route and JSON example used here. The implemented URL uses the `Bccr.GE` spelling from the owner's successful query, with query parameters `fechaInicio`, `fechaFin` formatted `yyyy/mm/dd` and `idioma=ES`. Authentication is only `Authorization: Bearer <token>` over verified HTTPS. The request also sends `User-Agent: Mozilla/5.0`. The successful query used both settings together; it does not establish whether that header or the uppercase `GE` is required.
 
 The parser accepts the documented `estado`/`mensaje`/`datos` envelope and a single indicator group with string `codigoIndicador`, `nombreIndicador` and `series`; each observation contains `fecha` and numeric `valorDatoPorPeriodo`. It does not accept legacy XML, quoted rates, boolean rates or undocumented alternate wrappers. A changed shape fails explicitly rather than guessing.
 
@@ -98,6 +98,28 @@ Missing or malformed local tokens fail before connecting. HTTP 401/403 report au
 
 All redirects are rejected, including same-host redirects and HTTPS-to-HTTP changes. The token is never forwarded to a redirect target, placed in a query string or output. There is no automatic retry or fallback host. TLS verification stays enabled. Local tokens must have valid Bearer syntax, without whitespace/control characters. The default socket timeout is 30 seconds (not a total execution deadline), with a 2 MB response limit; use smaller ranges if needed.
 
+## Reported live query: 2026-10-23
+
+The project owner ran this command locally in Windows PowerShell and shared its parsed output in the development conversation:
+
+```powershell
+python -m fx_lag.bccr_sdde --date 2026-10-22
+```
+
+| Output field | Reported value |
+| --- | --- |
+| Indicator | 317 (USD compra reference) |
+| Rate | 453.45000000 CRC/USD |
+| Effective date | 2026-10-22 |
+| Retrieved at | 2026-10-23T21:13:05.546174Z (UTC) |
+| Missing dates | None (`[]`) |
+
+This is owner-supplied evidence of one successful authenticated query using the uppercase `Bccr.GE` URL and `User-Agent: Mozilla/5.0` together. The request settings were saved in commit `469978a` of [PR #5](https://github.com/HectorFCruzPO/fx-lag-intelligence/pull/5); commit `d8296d1` fixed the comment encoding.
+
+The assistant did not execute this authenticated request, inspect the token, or capture the raw API response. The output is the collector's parsed JSON, not a raw-response fixture. No credential is included in this record. The owner also reported that local tests passed, without sharing an exact test count; that report is separate from the offline suite run during this review.
+
+This sample supports live request/parse success for one date. It does not prove URL case sensitivity, User-Agent necessity, range boundaries, calendar behavior, freshness, historical completeness or production reliability. The rate has not been independently reconciled against a separate official publication. No publication timestamp was returned by the collector.
+
 ## Validation and remaining live checks
 
 Run the complete suite, including the unchanged legacy tests:
@@ -108,10 +130,10 @@ python -m unittest discover -s tests -v
 
 Fixtures under `tests/fixtures/sdde/` are synthetic examples shaped from the guide; they are not captured authenticated responses. Tests run without credentials or network. No SDDE token was configured during implementation. Shell network access could not connect to the environment proxy; reading the guide through the web tool does not validate the API.
 
-Before relying on collected rates, complete these checks with a legitimately supplied token:
+Before relying on broader collection, complete these checks with a legitimately supplied token:
 
-1. Obtain a successful authenticated query and reconcile a small range with BCCR's official publication.
-2. Confirm exact accepted URL casing: the guide varies `Ge`/`GE` and `SDDE`/`sddE`; the code follows section 1.3 and does not try alternate hosts or forward redirects.
+1. Extend the successful single-date query to a small range and independently reconcile the returned rates with BCCR's official publication.
+2. The reported query establishes that the current `SDDE`/`Bccr.GE` spelling worked once. Other casing variants and the necessity of the User-Agent header were not tested separately. The code does not try alternate hosts or follow redirects.
 3. Confirm actual response types, indicator 317 identity/units, inclusive date boundaries, missing/null semantics, weekend/holiday behavior, future effective dates, revisions and historical coverage. Until then, the parser intentionally implements the documented example only.
 4. Confirm account/token validity, expiry, service limits and current publication metadata semantics. Do not infer per-observation publication timestamps from series metadata.
 
