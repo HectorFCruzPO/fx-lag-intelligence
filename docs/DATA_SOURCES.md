@@ -35,6 +35,8 @@ Compra is the bank buying USD from the customer—the relevant direction when se
 
 ## Promerica Costa Rica
 
+A [follow-up Promerica access review](PROMERICA_SOURCES.md) researched on 2026-10-23 records the owner's online/app channel, public source candidates, robots exclusions, unreadable website terms, and unresolved supported-access questions. No Promerica collector is implemented. The notes below are the earlier discovery snapshot.
+
 VERIFIED: The homepage labels dollar/euro compra and venta and links to a history form. Its extracted rate cells were empty. The separately fetched branch page displays USD/CRC compra and venta and warns that prices can change with market conditions. It also contains a distinct accounting-reference section. No effective date/time accompanies the figures in the extracted branch page. The history form has selectors and a query button, but historical records were not retrieved. Reading these pages required no login. Homepage, branch page, history form.
 
 OPEN QUESTIONS:

@@ -45,6 +45,8 @@ Automated currency trading, bank-account access, guaranteed forecasts, causal cl
 
 ## Data sources and discovery decisions
 
+The owner confirmed that their USD 3,000 sales normally use Promerica online banking or the mobile app. The [Promerica access review](PROMERICA_SOURCES.md) tracks whether a permitted public or authorized feed matches that channel; public branch-rate equivalence is not assumed.
+
 | Source | Intended use | Required verification before implementation |
 | --- | --- | --- |
 | Banco Promerica Costa Rica USD compra | Retail bank buying rate relevant to selling USD | Official endpoint or page, allowed collection method, rate applicability by channel/amount, effective timestamp, refresh cadence, fees and executable-quote limitations |
