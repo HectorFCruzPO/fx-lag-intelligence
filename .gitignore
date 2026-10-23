@@ -154,3 +154,7 @@ __pycache__/
 .venv/
 work/
 rates*.json
+
+# Local observation history (not institutional data redistribution)
+/data/
+*.csv.lock
