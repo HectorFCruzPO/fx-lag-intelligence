@@ -40,6 +40,14 @@ class NetworkError(CollectorError):
     """Transport, HTTP, or redirect failure."""
 
 
+class RateLimitError(NetworkError):
+    """HTTP 429, with optional Retry-After for the scheduled runner."""
+
+    def __init__(self, message: str, retry_after: str | None = None):
+        super().__init__(message)
+        self.retry_after = retry_after
+
+
 class ResponseError(CollectorError):
     """Invalid JSON, unexpected schema, or invalid observation."""
 
@@ -183,13 +191,14 @@ def collect(start: date, end: date, timeout: float = 30) -> dict:
             raw = response.read(MAX_RESPONSE_BYTES + 1)
     except HTTPError as exc:
         code = exc.code
+        retry_after = exc.headers.get("Retry-After") if exc.headers else None
         exc.close()  # Do not read/log potentially sensitive HTTP error bodies.
         if code in (401, 403):
             raise AuthenticationError(f"SDDE HTTP {code}: access rejected; check the SDDE token and subscription.") from None
         if code == 404:
             message = "SDDE HTTP 404: verify the documented endpoint and authentication."
         elif code == 429:
-            message = "SDDE HTTP 429: request limit reached; reduce query frequency."
+            raise RateLimitError("SDDE HTTP 429: request limit reached; reduce query frequency.", retry_after) from None
         elif 300 <= code < 400:
             message = "SDDE HTTP redirect rejected; credentials were not forwarded."
         else:
