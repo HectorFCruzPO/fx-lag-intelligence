@@ -1,6 +1,6 @@
 """USD compra (317) adapter for BCCR's documented SDDE REST API.
 
-The wire contract comes from the official SDDE guide, pages 19–20.
+The wire contract comes from the official SDDE guide, pages 19â€“20.
 Synthetic tests verify the implementation; authenticated behavior is unverified.
 """
 from __future__ import annotations
@@ -19,7 +19,7 @@ from urllib.parse import urlencode
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 # Section 1.3 base URL; its Ge/GE capitalization varies elsewhere in the guide.
-BASE_URL = "https://apim.bccr.fi.cr/SDDE/api/Bccr.Ge.SDDE.Publico.Indicadores.API"
+BASE_URL = "https://apim.bccr.fi.cr/SDDE/api/Bccr.GE.SDDE.Publico.Indicadores.API"
 ENDPOINT = BASE_URL + "/indicadoresEconomicos/317/series"
 MAX_RESPONSE_BYTES = 2_000_000
 TOKEN_VARIABLE = "BCCR_SDDE_TOKEN"
@@ -168,7 +168,7 @@ def collect(start: date, end: date, timeout: float = 30) -> dict:
         "fechaFin": end.isoformat().replace("-", "/"), "idioma": "ES",
     })
     request = Request(ENDPOINT + "?" + query, headers={
-        "Authorization": "Bearer " + token, "Accept": "application/json",
+        "Authorization": "Bearer " + token, "Accept": "application/json", "User-Agent": "Mozilla/5.0",
     }, method="GET")
     try:
         with build_opener(NoRedirect()).open(request, timeout=timeout) as response:
@@ -222,3 +222,4 @@ def main(argv=None) -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
