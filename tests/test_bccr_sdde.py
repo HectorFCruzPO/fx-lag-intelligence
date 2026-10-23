@@ -147,10 +147,11 @@ class TransportTests(unittest.TestCase):
         request=opener.return_value.open.call_args.args[0]
         self.assertEqual(request.method,"GET")
         self.assertIsNone(request.data)
-        self.assertEqual(urlsplit(request.full_url).path,urlsplit(sdde.ENDPOINT).path)
+        self.assertEqual(urlsplit(request.full_url).path, "/SDDE/api/Bccr.GE.SDDE.Publico.Indicadores.API/indicadoresEconomicos/317/series")
         self.assertEqual(parse_qs(urlsplit(request.full_url).query),{"fechaInicio":["2026/01/01"],"fechaFin":["2026/01/03"],"idioma":["ES"]})
         self.assertEqual(request.get_header("Authorization"),"Bearer "+SECRET)
         self.assertEqual(request.get_header("Accept"),"application/json")
+        self.assertEqual(request.get_header("User-agent"), "Mozilla/5.0")
         self.assertNotIn(SECRET,request.full_url)
         self.assertEqual(opener.return_value.open.call_args.kwargs,{"timeout":12})
         self.assertIsInstance(opener.call_args.args[0],sdde.NoRedirect)

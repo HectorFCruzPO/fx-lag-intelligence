@@ -7,17 +7,17 @@ The legacy collector requests **BCCR reference USD compra, indicator 317**, in C
 - **SDDE REST adapter:** `python -m fx_lag.bccr_sdde`, using the separate `BCCR_SDDE_TOKEN` environment variable. Implemented and tested offline; see [SDDE setup, usage and live-validation limits](BCCR_SDDE.md).
 - **Legacy SOAP prototype:** `python -m fx_lag.bccr`, retained intact for historical/testing purposes. Its setup is below. It is not the intended production integration.
 
-Neither adapter has completed a successful authenticated live request. The following source review records what is documented, not a live-operation claim.
+The project owner shared successful authenticated SDDE single-date and three-day range queries on 2026-10-23 and confirmed agreement of all three range rates with BCCR's official history; see the [validation record](BCCR_SDDE.md#reported-live-query-2026-10-23). The legacy prototype remains unvalidated. The historical source review below predates that query.
 
 ## Status: legacy prototype, not a production integration
 
-**The Python implementation works against offline fixtures and mocks. It is not a verified live integration.** BCCR announced retirement of the legacy Web Service for 2026-06-30. This collector targets that legacy service and is **not the intended production integration**. The separate SDDE adapter targets the officially documented replacement, but authenticated validation is still required before production use.
+**The Python implementation works against offline fixtures and mocks. It is not a verified live integration.** BCCR announced retirement of the legacy Web Service for 2026-06-30. This collector targets that legacy service and is **not the intended production integration**. The separate SDDE adapter targets the officially documented replacement, but broader live validation is still required before production use.
 
 | Capability | Evidence and limit |
 | --- | --- |
 | Legacy request construction, XML parsing and errors | Implemented and tested offline with synthetic fixtures; no real rates collected. |
 | Legacy service retirement | Official announcement verified; actual shutdown not independently confirmed by an authenticated request. |
-| Replacement SDDE API | Official technical documentation located and read; separate REST adapter implemented and tested offline; no live request authenticated. |
+| Replacement SDDE API | Official technical documentation located and read; separate REST adapter tested offline; owner reported successful single-date and three-day range queries, plus reconciliation of all three range rates with official history. |
 
 ### Confirmed official information (reviewed 2026-10-22)
 
@@ -30,7 +30,7 @@ The [official SDDE technical standard](https://gee.bccr.fi.cr/indicadoreseconomi
 - Indicator metadata: `GET` with suffix `/indicadoresEconomicos/{codigo}/metadata`, with `idioma` (page 17).
 - Authentication: register on the Indicators site, generate a token under **Mi Perfil → Generar token**, and send `Authorization: Bearer <token>` (pages 4–8).
 
-These are documented contracts, not verified live responses. The guide varies `Ge`/`GE` capitalization between its base URL and examples; exact accepted casing needs confirmation. Do not assume legacy subscription tokens work with SDDE. No replacement endpoint has been inferred from third-party code.
+These are documented contracts, not verified live responses. The guide varies `Ge`/`GE` capitalization between its base URL and examples; the owner's later query succeeded with `Bccr.GE` (see the validation record). Other variants and case sensitivity remain unverified. Do not assume legacy subscription tokens work with SDDE. No replacement endpoint has been inferred from third-party code.
 
 The [historical XML service guide](https://gee.bccr.fi.cr/indicadoreseconomicos/Documentos/DocumentosMetodologiasNotasTecnicas/Webservices_de_indicadores_economicos.pdf) documents indicator 317, subscription email/token, representative name, no sublevels and date ranges. This is evidence for the legacy prototype only.
 
@@ -39,7 +39,7 @@ The [historical XML service guide](https://gee.bccr.fi.cr/indicadoreseconomicos/
 - The announcement's shortened guide link, `https://ow.ly/BaCr50ZfsCa`, was inaccessible through the research tool. The SDDE PDF above was located separately on BCCR's official domain; its identity as that shortened link's destination is unverified.
 - The legacy [WSDL](https://gee.bccr.fi.cr/Indicadores/Suscripciones/WS/wsindicadoreseconomicos.asmx?WSDL) and [operation help page](https://gee.bccr.fi.cr/Indicadores/Suscripciones/WS/wsindicadoreseconomicos.asmx?op=ObtenerIndicadoresEconomicosXML) returned 503 through the web research tool, including on this review. A 503 does not prove retirement. Indexed copies are not successful current service requests.
 - Shell Git access failed to connect to the configured proxy. This is an environment failure, not evidence about BCCR's API.
-- **No authenticated request to either interface was attempted or succeeded; no BCCR credentials were configured.** Runtime availability, account setup, exact responses, historical completeness, current limits and token compatibility remain unverified. The replacement API is verified as official documentation only.
+- **At the original 2026-10-22 review, neither interface had been authenticated in this environment.** The owner's later SDDE success is recorded separately above. Broader runtime availability, raw responses, historical completeness, current limits and token compatibility remain unverified.
 
 ## Legacy prototype setup (Python 3.10 or newer)
 
@@ -136,4 +136,4 @@ No credentials or network are required. Fixtures are **synthetic**, not recorded
 - Publication calendar/timezone, weekends/holidays, future effective dates, revisions, historical completeness, limits, supported range size, token lifecycle, current legacy availability, and replacement API access are unverified. The historical 17:30 next-day availability note is not a publication timestamp and is not used by the code.
 - Data use and redistribution remain subject to institutional terms described in DATA_SOURCES.md; the repository's MIT license is for code, not a grant of rights to BCCR data.
 
-Before calling the SDDE integration live-tested, supply credentials privately, obtain a successful authenticated response, reconcile a small date range against BCCR's official publication, and update these assumptions with actual evidence. Never commit credentials or raw responses containing them.
+Owner-reported SDDE single-date and three-day range queries succeeded, and the owner confirmed all three range rates matched BCCR's official history. Before treating broader collection as validated, extend these checks to calendar edge cases and repeated operation; update assumptions with evidence. Never commit credentials or raw responses containing them.
