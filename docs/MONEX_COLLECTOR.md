@@ -6,8 +6,9 @@ not BCCR reference compra (317) or an executable Promerica quote.
 
 The implementation is tested offline. On 2026-10-23 the owner successfully
 requested authenticated metadata and four-date series samples from their Windows
-computer using PowerShell. **The new Python MONEX command has not yet been tested
-with a live token.** No credentials are available in the development environment.
+computer using PowerShell. The owner subsequently reported a successful live
+Python MONEX query and CSV save; see the validation record below. No credentials
+are available in the development environment.
 
 ## Install and configure
 
@@ -166,8 +167,8 @@ future study must keep all three series separate and retain unchanged, missing,
 reverse-order and no-follow-through cases. The owner's chosen Promerica public
 branch rate need not equal the app rate, but it must be labeled correctly.
 
-Next, run the new Python command locally and compare its sample with the values
-above. Validate dates around weekends/holidays and revisions before configuring
+The owner has now run the new Python command locally with matching sample values.
+Validate dates around weekends/holidays and revisions before configuring
 any MONEX schedule. No Promerica collector, alert, prediction, database or paid
 service is included.
 
@@ -182,3 +183,29 @@ CSV history, BCCR scheduler and MONEX tests. MONEX cases cover precision, identi
 missing/invalid data, JSON/schema errors, authentication, HTTP 429, safe error
 handling, redirects, transport failures, CSV isolation and CLI behavior. Tests
 make no real network requests and require no token.
+
+## Owner-reported live Python validation, 2026-10-23
+
+On Windows with Python 3.14, the owner ran:
+
+```powershell
+python -m fx_lag.monex --start 2026-10-20 --end 2026-10-23 --csv .\data\monex-history.csv
+```
+
+The CLI returned indicator 3323, all four rates listed above, `CRC/USD`, the
+correct effective dates and retrieval timestamp `2026-10-23T23:55:03.537779Z`.
+It reported `missing_dates: []` and `CSV history: 4 added, 0 already saved.`
+This is a successful owner-reported authenticated Python query and CSV save for
+that sample, not a live request executed by the development environment.
+
+Before that query, the owner ran 116 offline tests in 1.066s: `OK (skipped=1)`.
+The skip was not identified in that abbreviated output. ResourceWarnings named
+synthetic HTTP errors 401/403/429/503; investigation found the legacy collector
+left non-500 HTTP error responses unclosed. The follow-up fix closes those
+responses without reading their bodies and adds a focused regression test.
+Existing SOAP HTTP 500 parsing and closure remain covered by the full suite.
+The owner must rerun the updated suite to confirm cleanup on Python 3.14/Windows.
+
+Publication times, intraday behavior, holiday coverage, historical completeness,
+revisions and repeated unattended reliability remain unverified. This feature
+still installs no MONEX schedule and makes no predictive or lag claim.

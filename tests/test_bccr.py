@@ -140,6 +140,18 @@ class TransportTests(unittest.TestCase):
                 bccr.collect(START, END, "Example")
 
     @patch("fx_lag.bccr.build_opener")
+    def test_non_500_http_errors_close_without_reading_body(self, opener):
+        for code in (401, 403, 429, 503):
+            stream = MagicMock()
+            opener.return_value.open.side_effect = HTTPError(bccr.ENDPOINT, code, "synthetic-private-reason", {}, stream)
+            expected = bccr.AuthenticationError if code in (401, 403) else bccr.NetworkError
+            with self.subTest(code=code), self.assertRaises(expected) as caught:
+                bccr.collect(START, END, "Example")
+            stream.close.assert_called_once()
+            stream.read.assert_not_called()
+            self.assertNotIn("synthetic-private-reason", str(caught.exception))
+
+    @patch("fx_lag.bccr.build_opener")
     def test_http_500_auth_fault(self, opener):
         opener.return_value.open.side_effect = HTTPError(bccr.ENDPOINT, 500, "fault", {}, io.BytesIO(fixture("auth_fault.xml")))
         with self.assertRaises(bccr.AuthenticationError):

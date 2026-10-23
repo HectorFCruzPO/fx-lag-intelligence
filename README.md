@@ -46,7 +46,7 @@ These are ordered milestones, not delivery-date commitments.
 
 ## Current project status
 
-**BCCR SDDE REST adapter tested offline, with successful single-date, weekday-range and weekend-range queries reported by the project owner.** The new Python CLI requests USD compra reference indicator 317 using documented Bearer authentication. See [SDDE setup and usage](docs/BCCR_SDDE.md) and the [official-source review](docs/BCCR_COLLECTOR.md). The legacy SOAP prototype remains intact; BCCR announced its service's retirement for 2026-06-30, so it is not the intended production integration. The owner confirmed that the weekday and weekend sample rates matched BCCR's official history. Optional local CSV history preserves each retrieval timestamp, including unchanged rates fetched again; see [CSV saving instructions](docs/BCCR_SDDE.md#save-a-timestamped-local-csv-history). An optional [Windows weekday scheduler](docs/BCCR_SCHEDULER.md) is implemented with a persistent HTTP 429 pause; the owner reported successful Windows installation and a first scheduled CSV save on 2026-10-23. Live 429 handling and repeated unattended reliability remain unverified. This is a small-sample, owner-reported validation; broader live reliability remains unverified. The legacy adapter has no authenticated validation. A [MONEX closing-average CLI](docs/MONEX_COLLECTOR.md) is now implemented and tested offline, with owner-reported authenticated PowerShell samples; the new Python MONEX command remains live-unverified. No dashboard, database, alerts, predictions or Promerica integration exists.
+**BCCR SDDE REST adapter tested offline, with successful single-date, weekday-range and weekend-range queries reported by the project owner.** The new Python CLI requests USD compra reference indicator 317 using documented Bearer authentication. See [SDDE setup and usage](docs/BCCR_SDDE.md) and the [official-source review](docs/BCCR_COLLECTOR.md). The legacy SOAP prototype remains intact; BCCR announced its service's retirement for 2026-06-30, so it is not the intended production integration. The owner confirmed that the weekday and weekend sample rates matched BCCR's official history. Optional local CSV history preserves each retrieval timestamp, including unchanged rates fetched again; see [CSV saving instructions](docs/BCCR_SDDE.md#save-a-timestamped-local-csv-history). An optional [Windows weekday scheduler](docs/BCCR_SCHEDULER.md) is implemented with a persistent HTTP 429 pause; the owner reported successful Windows installation and a first scheduled CSV save on 2026-10-23. Live 429 handling and repeated unattended reliability remain unverified. This is a small-sample, owner-reported validation; broader live reliability remains unverified. The legacy adapter has no authenticated validation. A [MONEX closing-average CLI](docs/MONEX_COLLECTOR.md) is now implemented and tested offline, with owner-reported authenticated PowerShell samples; the owner also reported a successful live Python range query and four-row CSV save. No dashboard, database, alerts, predictions or Promerica integration exists.
 
 ## How we will build with Codex and GitHub
 
@@ -75,8 +75,8 @@ Keep secrets out of Git. Record assumptions explicitly, use synthetic data for e
 The standalone [MONEX collector](docs/MONEX_COLLECTOR.md) retrieves daily closing
 averages through BCCR SDDE indicator **3323**. It supports single dates, inclusive
 ranges and separate timestamped CSV history. The owner successfully queried
-metadata and a four-date sample using PowerShell; the new Python command remains
-live-unverified. Indicator 3439's intraday refresh behavior is still unverified.
+metadata and a four-date sample using PowerShell, then reported a successful
+live Python query with four CSV rows saved. Indicator 3439's intraday refresh behavior is still unverified.
 
 ```powershell
 python -m fx_lag.monex --start 2026-10-20 --end 2026-10-23 --csv .\data\monex-history.csv

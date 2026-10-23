@@ -189,6 +189,10 @@ def collect(start: date, end: date, name: str, timeout: float = 30) -> dict:
         with build_opener(NoRedirect()).open(request, timeout=timeout) as response:
             raw = response.read(MAX_RESPONSE_BYTES + 1)
     except HTTPError as exc:
+        if exc.code != 500:
+            # Only HTTP 500 bodies are inspected for SOAP faults below.
+            # Close all other responses without reading sensitive error bodies.
+            exc.close()
         if exc.code in (401, 403):
             raise AuthenticationError(f"HTTP {exc.code}: access rejected; check subscription credentials and access policy.") from None
         if exc.code == 500:

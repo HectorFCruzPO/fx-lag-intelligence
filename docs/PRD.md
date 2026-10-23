@@ -148,8 +148,8 @@ Use the [Codex and GitHub workflow](../README.md#how-we-will-build-with-codex-an
 
 A [MONEX CLI](MONEX_COLLECTOR.md) now implements SDDE indicator 3323 with separate
 local CSV history and offline tests. Owner-side authenticated PowerShell metadata
-and sample series succeeded for 3323 and 3439; the Python MONEX command still needs
-live validation. No intraday refresh interval or per-observation publication time
+and sample series succeeded for 3323 and 3439. The owner subsequently reported a
+successful Python 3323 range query and four-row CSV save. No intraday refresh interval or per-observation publication time
 is verified. No MONEX schedule or alert is implemented.
 
 The owner selected Promerica public branch compra for published-rate research,

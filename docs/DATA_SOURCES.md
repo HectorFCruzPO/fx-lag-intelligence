@@ -120,7 +120,9 @@ values match after the session. See [MONEX collector](MONEX_COLLECTOR.md) for ex
 values, evidence limits and setup. Earlier unknown-mapping notes above are
 historical. Legacy webpage table IDs 748/770 are not SDDE table IDs.
 
-The new Python adapter uses only 3323 and is tested offline, not live with a token.
+The Python adapter uses only 3323. In addition to offline tests, the owner reported
+a successful authenticated Python query and four-row CSV save on 2026-10-23;
+retrieved_at was 2026-10-23T23:55:03.537779Z.
 No intraday refresh or publication time was established. The owner selected
 Promerica public branch compra for research even if it differs from the app;
 executable-price equivalence is not a prerequisite for that study. Automated
