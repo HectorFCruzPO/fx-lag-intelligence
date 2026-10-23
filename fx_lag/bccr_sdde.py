@@ -1,4 +1,4 @@
-"""USD compra (317) adapter for BCCR's documented SDDE REST API.
+"""USD compra (317) CLI and shared BCCR SDDE pipeline for supported price series.
 
 The wire contract comes from the official SDDE guide, pages 19-20.
 Synthetic tests verify the implementation. The owner reported successful
@@ -88,8 +88,16 @@ def reject_constant(value: str):
     raise ValueError("Nonstandard JSON number")
 
 
-def parse_response(raw: bytes, start: date, end: date, retrieved_at: str) -> dict:
+def series_endpoint(indicator: int) -> str:
+    """Only explicitly supported price series may use the shared SDDE pipeline."""
+    if type(indicator) is not int or indicator not in (317, 3323):
+        raise CollectorError("Unsupported SDDE indicator; use compra 317 or MONEX closing average 3323.")
+    return BASE_URL + f"/indicadoresEconomicos/{indicator}/series"
+
+
+def parse_response(raw: bytes, start: date, end: date, retrieved_at: str, *, indicator: int = 317) -> dict:
     """Validate the documented indicator-series JSON, never a legacy XML shape."""
+    endpoint = series_endpoint(indicator)
     if start > end:
         raise CollectorError("Start date must be on or before end date.")
     try:
@@ -116,7 +124,7 @@ def parse_response(raw: bytes, start: date, end: date, retrieved_at: str) -> dic
     if len(groups) != 1 or not isinstance(groups[0], dict):
         raise ResponseError("SDDE returned unexpected indicator groups.")
     group = groups[0]
-    if group.get("codigoIndicador") != "317" or not isinstance(group.get("nombreIndicador"), str):
+    if group.get("codigoIndicador") != str(indicator) or not isinstance(group.get("nombreIndicador"), str):
         raise ResponseError("SDDE returned an unexpected indicator identity.")
     rows = group.get("series")
     if not isinstance(rows, list):
@@ -143,8 +151,8 @@ def parse_response(raw: bytes, start: date, end: date, retrieved_at: str) -> dic
         if not rate.is_finite() or rate <= 0:
             raise ResponseError("SDDE rate must be finite and positive.")
         observations[effective] = {
-            "source": "BCCR", "interface": "SDDE", "source_url": ENDPOINT,
-            "indicator": 317, "rate": str(rate), "units": "CRC/USD",
+            "source": "BCCR", "interface": "SDDE", "source_url": endpoint,
+            "indicator": indicator, "rate": str(rate), "units": "CRC/USD",
             "effective_date": effective.isoformat(), "retrieved_at": retrieved_at,
         }
     if not observations:
@@ -163,7 +171,8 @@ def parse_response(raw: bytes, start: date, end: date, retrieved_at: str) -> dic
     }
 
 
-def collect(start: date, end: date, timeout: float = 30) -> dict:
+def collect(start: date, end: date, timeout: float = 30, *, indicator: int = 317) -> dict:
+    endpoint = series_endpoint(indicator)
     if start > end:
         raise CollectorError("Start date must be on or before end date.")
     if not math.isfinite(timeout) or timeout <= 0:
@@ -178,7 +187,7 @@ def collect(start: date, end: date, timeout: float = 30) -> dict:
         "fechaInicio": start.isoformat().replace("-", "/"),
         "fechaFin": end.isoformat().replace("-", "/"), "idioma": "ES",
     })
-    request = Request(ENDPOINT + "?" + query, headers={
+    request = Request(endpoint + "?" + query, headers={
         "Authorization": "Bearer " + token, "Accept": "application/json",
         "User-Agent": "Mozilla/5.0",
     }, method="GET")
@@ -209,11 +218,14 @@ def collect(start: date, end: date, timeout: float = 30) -> dict:
     if len(raw) > MAX_RESPONSE_BYTES:
         raise ResponseError("SDDE response exceeds the 2 MB limit; request a smaller date range.")
     retrieved = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
-    return parse_response(raw, start, end, retrieved)
+    return parse_response(raw, start, end, retrieved, indicator=indicator)
 
 
-def main(argv=None) -> int:
-    parser = argparse.ArgumentParser(description="BCCR SDDE USD compra (317) collector; small live samples reported, broader validation pending.")
+def main(argv=None, *, indicator: int = 317) -> int:
+    endpoint = series_endpoint(indicator)
+    description = ("BCCR SDDE USD compra (317) collector" if indicator == 317 else
+                   "BCCR MONEX daily closing-average (3323) collector; not a retail compra quote")
+    parser = argparse.ArgumentParser(description=description)
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--date", type=iso_date, help="One effective date, YYYY-MM-DD")
     group.add_argument("--start", type=iso_date, help="First effective date, YYYY-MM-DD")
@@ -224,10 +236,14 @@ def main(argv=None) -> int:
     if bool(args.start) != bool(args.end):
         parser.error("Use --start and --end together, or --date alone.")
     try:
-        result = collect(args.date or args.start, args.date or args.end, args.timeout)
+        dates = (args.date or args.start, args.date or args.end, args.timeout)
+        result = collect(*dates) if indicator == 317 else collect(*dates, indicator=indicator)
         saved = None
         if args.csv is not None:
-            saved = save_observations(args.csv, result["observations"], source_url=ENDPOINT)
+            if indicator == 317:
+                saved = save_observations(args.csv, result["observations"], source_url=endpoint)
+            else:
+                saved = save_observations(args.csv, result["observations"], source_url=endpoint, indicator=indicator)
     except (CollectorError, HistoryError) as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 1

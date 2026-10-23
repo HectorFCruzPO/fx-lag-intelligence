@@ -19,9 +19,11 @@ class HistoryError(Exception):
     """Safe storage failure; never includes raw row content or system errors."""
 
 
-def validated_row(observation: dict, source_url: str) -> dict:
+def validated_row(observation: dict, source_url: str, indicator: int = 317) -> dict:
     """Reject corrupt/foreign rows rather than silently changing a history file."""
     try:
+        if type(indicator) is not int or indicator not in (317, 3323):
+            raise ValueError
         if not isinstance(observation, dict) or set(observation) != set(FIELDS):
             raise ValueError
         row = dict(observation)
@@ -30,7 +32,7 @@ def validated_row(observation: dict, source_url: str) -> dict:
         if any(not isinstance(value, str) for value in row.values()):
             raise ValueError
         if (row["source"], row["interface"], row["indicator"], row["units"], row["source_url"]) != (
-            "BCCR", "SDDE", "317", "CRC/USD", source_url,
+            "BCCR", "SDDE", str(indicator), "CRC/USD", source_url,
         ):
             raise ValueError
         # Accept decimal/scientific notation emitted by Decimal, never formulas.
@@ -59,7 +61,7 @@ def observation_key(row: dict) -> tuple:
             datetime.fromisoformat(row["retrieved_at"].replace("Z", "+00:00")))
 
 
-def read_history(path: Path, source_url: str) -> list[dict]:
+def read_history(path: Path, source_url: str, indicator: int = 317) -> list[dict]:
     if path.is_symlink():
         raise HistoryError("CSV destination must not be a symbolic link.")
     if not path.exists():
@@ -70,14 +72,14 @@ def read_history(path: Path, source_url: str) -> list[dict]:
         reader = csv.DictReader(stream, strict=True)
         if reader.fieldnames != list(FIELDS):
             raise HistoryError("CSV history has an incompatible header; choose a new file or restore a backup.")
-        rows = [validated_row(row, source_url) for row in reader]
+        rows = [validated_row(row, source_url, indicator) for row in reader]
     keys = [observation_key(row) for row in rows]
     if len(keys) != len(set(keys)):
         raise HistoryError("CSV history already contains duplicate observations; no data was saved.")
     return rows
 
 
-def save_observations(path: str | Path, observations: list[dict], *, source_url: str) -> dict:
+def save_observations(path: str | Path, observations: list[dict], *, source_url: str, indicator: int = 317) -> dict:
     """Atomically add observations, retaining every distinct retrieval timestamp.
 
     Cooperating writers use an exclusive sidecar lock. This is a small local
@@ -89,7 +91,7 @@ def save_observations(path: str | Path, observations: list[dict], *, source_url:
     lock_path = None
     try:
         lock_path = destination.with_name(destination.name + ".lock")
-        incoming = [validated_row(row, source_url) for row in observations]
+        incoming = [validated_row(row, source_url, indicator) for row in observations]
         if not incoming:
             raise HistoryError("No observations to save; CSV history was not changed.")
         destination.parent.mkdir(parents=True, exist_ok=True)
@@ -97,7 +99,7 @@ def save_observations(path: str | Path, observations: list[dict], *, source_url:
             lock_fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
         except FileExistsError:
             raise HistoryError("CSV history is locked. Close other collectors; see the guide for stale-lock recovery.") from None
-        existing = read_history(destination, source_url)
+        existing = read_history(destination, source_url, indicator)
         keys = {observation_key(row) for row in existing}
         added, skipped = 0, 0
         for row in incoming:
