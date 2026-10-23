@@ -111,7 +111,7 @@ Two queries an hour apart produce **two rows for the same effective date, even w
 
 Duplicate prevention only skips an already saved combination of source, interface, indicator, effective date, numeric rate **and retrieval timestamp**. Decimal padding (`502.12` versus `502.12000`) and equivalent UTC timestamp spellings do not create duplicates. Later retrievals always remain separate. A rate change, or a return to a previous rate in a later query, is preserved. Rows stay in the order saved; existing values are not overwritten. No poll ID is invented: observations identical in every identity field are treated as the same observation.
 
-The stderr message reports counts, for example `CSV history: 3 added, 0 already saved.` Without `--csv`, no file is saved. This prepares successful-observation history for future hourly collection, but **does not schedule queries or send alerts**. Hourly polling is not evidence that BCCR publishes hourly, and monitoring cannot guarantee avoiding losses. Failed queries are not logged as successful observations. Scheduling, failed-query tracking, freshness and alert rules remain separate work.
+The stderr message reports counts, for example `CSV history: 3 added, 0 already saved.` Without `--csv`, no file is saved. CSV saving alone does not schedule queries or send alerts. A separate [Windows weekday scheduled runner](BCCR_SCHEDULER.md) now supports 30-minute collection with a persistent 429 pause; the owner reported successful Windows setup and a first scheduled CSV save (see its validation record). Live HTTP 429 handling and longer-term unattended operation remain unverified. Hourly polling is not evidence that BCCR publishes hourly, and monitoring cannot guarantee avoiding losses. Failed queries are not logged as successful observations. The separate runner records the latest attempt status; full failed-query history, freshness and alert rules remain separate work.
 
 ### Storage errors and limits
 
@@ -206,7 +206,15 @@ python -m fx_lag.bccr_sdde --start 2026-10-16 --end 2026-10-19
 
 All four observations had retrieval timestamp `2026-10-23T21:53:27.208715Z` (UTC), with `missing_dates: []`. The owner explicitly confirmed all four matched BCCR's official history. This is owner-supplied parsed output and owner-reported reconciliation; the assistant did not run the authenticated request or independently perform the comparison. No official-history URL, screenshot or raw API response was supplied. No credentials were shared.
 
-The collector returned explicit weekend dates in this sample rather than filling gaps. Equal weekend/Monday rates do not establish a universal carry-forward rule, publication time, or weekend/holiday policy. These observations were collected before the CSV feature existed; the new CSV feature has been tested offline, not live on the owner's Windows machine yet.
+The collector returned explicit weekend dates in this sample rather than filling gaps. Equal weekend/Monday rates do not establish a universal carry-forward rule, publication time, or weekend/holiday policy. These observations were collected before the CSV feature existed; the CSV feature was subsequently exercised on the owner's Windows machine as described below.
+
+### Owner-reported Windows CSV and scheduled save
+
+The owner shared two manual CSV rows for effective date `2026-10-22`, both at `453.45000000` CRC/USD, retrieved at `2026-10-23T22:04:57.090687Z` and `2026-10-23T22:06:16.854805Z`. This confirms that an unchanged rate retrieved twice was retained as separate timestamped rows in that sample.
+
+The owner later shared the successful Friday 17:00 scheduled run: state `status: saved` and a new CSV row for `2026-10-23`, rate `452.44000000` CRC/USD, retrieved at `2026-10-23T23:00:02.077501Z`. The earlier rows remained present. See the [full Windows validation record](BCCR_SCHEDULER.md#owner-reported-windows-validation-2026-10-23) for task timing, state and limitations. The assistant did not execute these authenticated requests. The October 23 rate has not been separately compared with official history in this conversation.
+
+The owner supplied a local full-suite result of `Ran 75 tests ... OK (skipped=1)` for the CSV branch. The skip was the symlink test because Windows did not permit creating symlinks; 74 tests passed, none failed. The later scheduler-test pass was reported without an exact count.
 
 ## Validation and remaining live checks
 
@@ -225,4 +233,4 @@ Before relying on broader collection, complete these checks with a legitimately 
 3. Extend validation beyond these samples: raw response types, missing/null semantics, other weekends, holidays, future effective dates, revisions and historical coverage. Both boundaries worked for the reported range; general range behavior remains to be tested. The parser continues to follow the documented example.
 4. Confirm account/token validity, expiry, service limits and current publication metadata semantics. Do not infer per-observation publication timestamps from series metadata.
 
-The guide provides enough structure to build an adapter; it does not substitute for live validation. Optional local CSV history is included. No database, schedule, Promerica, MONEX, dashboard, alerts or predictions are included. Institutional data use remains subject to the terms discussed in [DATA_SOURCES.md](DATA_SOURCES.md).
+The guide provides enough structure to build an adapter; it does not substitute for live validation. Optional local CSV history is included. An optional weekday scheduler is documented separately. No database, Promerica, MONEX, dashboard, alerts or predictions are included. Institutional data use remains subject to the terms discussed in [DATA_SOURCES.md](DATA_SOURCES.md).

@@ -158,3 +158,5 @@ rates*.json
 # Local observation history (not institutional data redistribution)
 /data/
 *.csv.lock
+# Protected local scheduler credentials/state belong under data/.
+*.dpapi
