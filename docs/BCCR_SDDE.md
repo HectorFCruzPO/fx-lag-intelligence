@@ -1,6 +1,6 @@
 # BCCR SDDE USD compra collector
 
-The SDDE collector is a standalone Python CLI for **BCCR USD compra reference indicator 317**, in CRC per USD. Its REST request and parser are implemented and tested offline. **The project owner shared output from one successful authenticated single-date query on 2026-10-23.** Broader live behavior and production readiness remain unverified. It does not fall back to the [legacy prototype](BCCR_COLLECTOR.md#status-legacy-prototype-not-a-production-integration).
+The SDDE collector is a standalone Python CLI for **BCCR USD compra reference indicator 317**, in CRC per USD. Its REST request and parser are implemented and tested offline. **The project owner shared successful authenticated single-date and three-day range queries on 2026-10-23, and confirmed that all three range rates matched BCCR's official history.** Broader live behavior and production readiness remain unverified. It does not fall back to the [legacy prototype](BCCR_COLLECTOR.md#status-legacy-prototype-not-a-production-integration).
 
 ## Setup
 
@@ -118,7 +118,27 @@ This is owner-supplied evidence of one successful authenticated query using the 
 
 The assistant did not execute this authenticated request, inspect the token, or capture the raw API response. The output is the collector's parsed JSON, not a raw-response fixture. No credential is included in this record. The owner also reported that local tests passed, without sharing an exact test count; that report is separate from the offline suite run during this review.
 
-This sample supports live request/parse success for one date. It does not prove URL case sensitivity, User-Agent necessity, range boundaries, calendar behavior, freshness, historical completeness or production reliability. The rate has not been independently reconciled against a separate official publication. No publication timestamp was returned by the collector.
+The initial sample supports live request/parse success for one date. The subsequent range and owner-reported reconciliation are recorded below. Neither sample proves URL case sensitivity, User-Agent necessity, general calendar behavior, freshness, historical completeness or production reliability. No publication timestamp was returned by the collector.
+
+### Three-day range and owner-reported reconciliation
+
+The owner subsequently shared output from:
+
+```powershell
+python -m fx_lag.bccr_sdde --start 2026-10-20 --end 2026-10-22
+```
+
+| Effective date | Returned rate (CRC/USD) |
+| --- | --- |
+| 2026-10-20 | 448.07000000 |
+| 2026-10-21 | 450.09000000 |
+| 2026-10-22 | 453.45000000 |
+
+All three observations had retrieval timestamp `2026-10-23T21:44:19.013551Z` (UTC); `missing_dates` was `[]`. Both requested boundary dates were present in this sample, and the overlapping October 22 value matched the earlier single-date query.
+
+After being asked to compare all three values with BCCR's official published history, the owner explicitly confirmed that they matched. This is **owner-reported reconciliation**, not an independent check performed by the assistant. No publication-history URL, screenshot or raw API response was supplied for that comparison. No credential was shared or stored.
+
+This completes a small-sample check of authenticated collection, multi-date parsing, inclusion of both boundaries for this range, and owner-reported agreement with official history. Weekend/holiday behavior, missing/null cases, revisions, historical completeness, repeated operation and broader reliability remain untested live.
 
 ## Validation and remaining live checks
 
@@ -132,9 +152,9 @@ Fixtures under `tests/fixtures/sdde/` are synthetic examples shaped from the gui
 
 Before relying on broader collection, complete these checks with a legitimately supplied token:
 
-1. Extend the successful single-date query to a small range and independently reconcile the returned rates with BCCR's official publication.
-2. The reported query establishes that the current `SDDE`/`Bccr.GE` spelling worked once. Other casing variants and the necessity of the User-Agent header were not tested separately. The code does not try alternate hosts or follow redirects.
-3. Confirm actual response types, indicator 317 identity/units, inclusive date boundaries, missing/null semantics, weekend/holiday behavior, future effective dates, revisions and historical coverage. Until then, the parser intentionally implements the documented example only.
+1. The three-day sample and owner-reported reconciliation above are complete. For a repeatable audit trail, retain the exact official-history reference used in future comparisons, without credentials.
+2. The reported query establishes that the current `SDDE`/`Bccr.GE` spelling worked for the reported single-date and range queries. Other casing variants and the necessity of the User-Agent header were not tested separately. The code does not try alternate hosts or follow redirects.
+3. Extend validation beyond this sample: raw response types, missing/null semantics, weekend/holiday behavior, future effective dates, revisions and historical coverage. Both boundaries worked for the reported range; general range behavior remains to be tested. The parser continues to follow the documented example.
 4. Confirm account/token validity, expiry, service limits and current publication metadata semantics. Do not infer per-observation publication timestamps from series metadata.
 
 The guide provides enough structure to build an adapter; it does not substitute for live validation. No database, schedule, Promerica, MONEX, dashboard, alerts or predictions are included. Institutional data use remains subject to the terms discussed in [DATA_SOURCES.md](DATA_SOURCES.md).

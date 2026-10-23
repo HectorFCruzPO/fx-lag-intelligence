@@ -7,7 +7,7 @@ The legacy collector requests **BCCR reference USD compra, indicator 317**, in C
 - **SDDE REST adapter:** `python -m fx_lag.bccr_sdde`, using the separate `BCCR_SDDE_TOKEN` environment variable. Implemented and tested offline; see [SDDE setup, usage and live-validation limits](BCCR_SDDE.md).
 - **Legacy SOAP prototype:** `python -m fx_lag.bccr`, retained intact for historical/testing purposes. Its setup is below. It is not the intended production integration.
 
-The project owner shared one successful authenticated SDDE query on 2026-10-23; see the [validation record](BCCR_SDDE.md#reported-live-query-2026-10-23). The legacy prototype remains unvalidated. The historical source review below predates that query.
+The project owner shared successful authenticated SDDE single-date and three-day range queries on 2026-10-23 and confirmed agreement of all three range rates with BCCR's official history; see the [validation record](BCCR_SDDE.md#reported-live-query-2026-10-23). The legacy prototype remains unvalidated. The historical source review below predates that query.
 
 ## Status: legacy prototype, not a production integration
 
@@ -17,7 +17,7 @@ The project owner shared one successful authenticated SDDE query on 2026-10-23; 
 | --- | --- |
 | Legacy request construction, XML parsing and errors | Implemented and tested offline with synthetic fixtures; no real rates collected. |
 | Legacy service retirement | Official announcement verified; actual shutdown not independently confirmed by an authenticated request. |
-| Replacement SDDE API | Official technical documentation located and read; separate REST adapter tested offline; owner reported one successful authenticated single-date query. |
+| Replacement SDDE API | Official technical documentation located and read; separate REST adapter tested offline; owner reported successful single-date and three-day range queries, plus reconciliation of all three range rates with official history. |
 
 ### Confirmed official information (reviewed 2026-10-22)
 
@@ -136,4 +136,4 @@ No credentials or network are required. Fixtures are **synthetic**, not recorded
 - Publication calendar/timezone, weekends/holidays, future effective dates, revisions, historical completeness, limits, supported range size, token lifecycle, current legacy availability, and replacement API access are unverified. The historical 17:30 next-day availability note is not a publication timestamp and is not used by the code.
 - Data use and redistribution remain subject to institutional terms described in DATA_SOURCES.md; the repository's MIT license is for code, not a grant of rights to BCCR data.
 
-One owner-reported SDDE single-date query now succeeded. Before treating broader collection as validated, reconcile a small date range against BCCR's official publication and update these assumptions with evidence. Never commit credentials or raw responses containing them.
+Owner-reported SDDE single-date and three-day range queries succeeded, and the owner confirmed all three range rates matched BCCR's official history. Before treating broader collection as validated, extend these checks to calendar edge cases and repeated operation; update assumptions with evidence. Never commit credentials or raw responses containing them.
