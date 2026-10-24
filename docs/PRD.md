@@ -171,3 +171,15 @@ entitlement, quotas and Python live behavior remain unverified. This is a resear
 prototype, not satisfaction of all production ingestion/freshness requirements.
 No alerts, predictions or executable-price claims are enabled. New Windows tasks
 still require owner installation and validation.
+
+## Descriptive comparison report milestone
+
+The [three-source report](COMPARISON_REPORT.md) now reads the existing CSV
+histories without network access or history changes. It shows distinct series,
+rate changes and unchanged polls, daily history, observation-check windows and
+sampling gaps. It excludes backfilled/future-effective dated rows from the
+current-at-retrieval polling timeline and keeps unknown Promerica dates unknown.
+It does not implement production freshness gates, causal episode matching,
+predictive lag, alerts, notifications or a dashboard. The report runs manually;
+Monday's unattended collection and live report interpretation still need owner
+validation. Offline tests use synthetic histories rather than claimed tendencies.
