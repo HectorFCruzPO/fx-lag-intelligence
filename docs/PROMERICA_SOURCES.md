@@ -1,12 +1,12 @@
 # Promerica Costa Rica USD compra: source and access review
 
-Research date: 2026-10-23 (Costa Rica). Status: **discovery only; no Promerica collector, scheduler or authenticated integration implemented**. This review builds on [DATA_SOURCES.md](DATA_SOURCES.md) and the [PRD](PRD.md).
+Research date: 2026-10-23 (Costa Rica). Historical discovery status updated 2026-10-24: an offline-tested direct public-page adapter and optional scheduler are now implemented; Python live behavior remains unverified. This review builds on [DATA_SOURCES.md](DATA_SOURCES.md) and the [PRD](PRD.md).
 
 ## Target rate and decision
 
 The owner confirmed that they normally sell USD through **Promerica online banking or its mobile app**, not at a branch. The project use case is selling USD 3,000 every 15 days for CRC. Compra is the bank buying the owner's dollars; venta is the opposite direction.
 
-**Owner decision (2026-10-23):** track the public branch USD/CRC compra as Promerica's published research series. Matching the online/app quote is not a prerequisite for this study. Keep it labeled as a public branch quote; it is not a verified executable online/app price. No documented public exchange-rate API/feed, automation permission, numeric request limit, update cadence or USD 3,000 channel applicability was verified in the material reviewed. This does not establish that a supported feed is unavailable. Resolve the permitted method before scheduled collection; app applicability matters only for future executable-proceeds claims. See the [three-source research plan](MONEX_RESEARCH.md).
+**Owner decision (2026-10-23):** track the public branch USD/CRC compra as Promerica's published research series. Matching the online/app quote is not a prerequisite for this study. Keep it labeled as a public branch quote; it is not a verified executable online/app price. No documented public exchange-rate API/feed, automation permission, numeric request limit, update cadence or USD 3,000 channel applicability was verified in the material reviewed. This does not establish that a supported feed is unavailable. The owner subsequently chose a direct public-page prototype without waiting for a bank reply; see the current implementation decision below. Automated-use entitlement remains unverified; app applicability matters only for future executable-proceeds claims. See the [three-source research plan](MONEX_RESEARCH.md).
 
 The BCCR collector, protected token, CSV and weekday task are unchanged by this research. Do not reuse BCCR indicator 317 as a Promerica rate.
 
@@ -81,3 +81,19 @@ Suggested inquiry, without private account or credential information:
 ## Validation of this discovery
 
 Official pages and targeted official-domain search results were reviewed as described above. Missing text, timeouts, cached extractions and the 404 are recorded rather than interpreted as proof of an API's existence or absence. This is a documentation-only change: no new authenticated request, bank login, real conversion, data collection job, paid-service configuration or institution contact occurred. No new Promerica integration success or prediction is claimed.
+
+## Implementation decision, 2026-10-24
+
+The owner requested a practical public-rate path assuming no bank reply. The
+prototype now reads only the public branch-rate URL and offers an optional
+30-minute weekday schedule. It does not require contact, a login, a private API
+or an assertion that silence grants permission. The current robots file does not
+exclude that path; history and script routes remain unused. The terms PDF could
+not be fetched in this recheck, and numeric polling limits remain unverified.
+
+See [MARKET_AUTOMATION.md](MARKET_AUTOMATION.md) for setup, evidence, unknown
+source dates, the synthetic HTML assumptions, 429 pause and permanent scheduled
+stop after HTTP 401/403. The Python collector needs one successful owner-side
+manual comparison before its task is enabled. Earlier recommendations above are
+the historical discovery plan, superseded by this explicit owner decision; they
+are not a new bank-confirmation requirement. No bank contact has been made.

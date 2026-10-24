@@ -160,3 +160,14 @@ and Promerica as separate series; MONEX → BCCR → Promerica is a hypothesis, 
 required event order. Preserve reverse, ambiguous and absent responses. Public-rate
 proceeds are scenarios until executable-quote applicability is verified. The
 full-product rules above remain proposals, not evidence of a validated lag.
+
+## Optional scheduling and public-page prototype update
+
+The [market automation feature](MARKET_AUTOMATION.md) adds guarded weekday
+MONEX scheduling and an offline-tested Promerica public-branch-page adapter with
+optional scheduling, as explicitly requested by the owner without awaiting a
+bank reply. The page's effective/publication time is unavailable; automated-use
+entitlement, quotas and Python live behavior remain unverified. This is a research
+prototype, not satisfaction of all production ingestion/freshness requirements.
+No alerts, predictions or executable-price claims are enabled. New Windows tasks
+still require owner installation and validation.
