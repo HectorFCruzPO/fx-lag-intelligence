@@ -1,0 +1,4 @@
+source,interface,source_url,indicator,rate,units,effective_date,retrieved_at
+BCCR,SDDE,https://apim.bccr.fi.cr/SDDE/api/Bccr.GE.SDDE.Publico.Indicadores.API/indicadoresEconomicos/3323/series,3323,501.00000000,CRC/USD,2026-10-26,2026-10-26T15:00:00Z
+BCCR,SDDE,https://apim.bccr.fi.cr/SDDE/api/Bccr.GE.SDDE.Publico.Indicadores.API/indicadoresEconomicos/3323/series,3323,500.50000000,CRC/USD,2026-10-26,2026-10-26T15:30:00Z
+BCCR,SDDE,https://apim.bccr.fi.cr/SDDE/api/Bccr.GE.SDDE.Publico.Indicadores.API/indicadoresEconomicos/3323/series,3323,500.50000000,CRC/USD,2026-10-26,2026-10-26T16:00:00Z

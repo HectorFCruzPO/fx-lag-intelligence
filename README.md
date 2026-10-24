@@ -95,3 +95,18 @@ manual sample before enabling its task. Every distinct retrieval is retained;
 Promerica effective/publication time stays unknown. No accounting-reference rate
 or app-price equivalence is inferred. A BCCR-hosted 429 now pauses both reference
 and MONEX schedules; Promerica access rejection stops its own future polling.
+
+## Compare the three local histories
+
+A [read-only comparison report](docs/COMPARISON_REPORT.md) is now available:
+
+```powershell
+python -m fx_lag.report
+```
+
+It shows per-source observations, increases/decreases/unchanged polls, daily
+history and observation gaps. Historical batches and unknown Promerica dates
+are kept separate from intraday comparisons. Output can also be JSON. It runs
+manually, makes no network requests and changes no collector or schedule. It
+calculates no predictive lag or alerts; Monday's real data remains a validation
+step. Synthetic examples are provided for testing now.
