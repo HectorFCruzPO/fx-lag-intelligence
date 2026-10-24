@@ -1,0 +1,14 @@
+{
+  "estado": true,
+  "mensaje": "Synthetic offline fixture, not a captured response",
+  "datos": [{
+    "codigoIndicador": "3323",
+    "nombreIndicador": "Promedio monex al cierre",
+    "series": [
+      {"fecha": "2026-10-20", "valorDatoPorPeriodo": 456.12345678},
+      {"fecha": "2026-10-21", "valorDatoPorPeriodo": 454.99000000},
+      {"fecha": "2026-10-22", "valorDatoPorPeriodo": null},
+      {"fecha": "2026-10-23", "valorDatoPorPeriodo": 454.31000000}
+    ]
+  }]
+}

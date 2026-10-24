@@ -1,6 +1,6 @@
 # MONEX and three-source timing research
 
-Research date: 2026-10-23. Documentation only; no MONEX or Promerica collector or live alert was added.
+Research date: 2026-10-23; reconciled with merged PR #9 on 2026-10-24. This PR changes documentation only. The MONEX closing-average collector is now implemented and owner-tested live; no Promerica collector or live alert is implemented.
 
 ## Research decision
 
@@ -12,29 +12,31 @@ Test whether movements often appear in MONEX, then BCCR, then Promerica. Do not 
 
 | Source | Confirmed observation | Limit |
 | --- | --- | --- |
-| [MONEX average table 748](https://gee.bccr.fi.cr/indicadoreseconomicos/cuadros/frmvercatcuadro.aspx?CodCuadro=748&Idioma=1) | Describes a transaction-weighted wholesale average; dated values and zeros are displayed. | API identifier, zero semantics, finality and historical completeness are unverified. One URL capitalization failed; the linked lowercase path opened. |
+| [MONEX average table 748](https://gee.bccr.fi.cr/indicadoreseconomicos/cuadros/frmvercatcuadro.aspx?CodCuadro=748&Idioma=1) | Describes a transaction-weighted wholesale average; dated values and zeros are displayed. | Catalog/metadata now identify closing-average indicator 3323 (SDDE table 547). Zero semantics, finality and historical completeness remain unverified. One URL capitalization failed; the linked lowercase path opened. |
 | [MONEX summary table 770](https://gee.bccr.fi.cr/indicadoreseconomicos/Cuadros/frmVerCatCuadro.aspx?CodCuadro=770&Idioma=1) | Separates traded-rate statistics and activity; includes a session-state clock. | The clock does not establish per-observation publication time, timezone or refresh guarantees. |
 | [Official MONEX service description](https://www.bccr.fi.cr/cr/es/sistema-de-pagos/servicios-sinpe/servicios-dirigidos-a-entidades/mercado-de-monedas-extranjeras.html) | Describes participant currency trading and states business-day trading hours of noon–13:00. | Trading hours do not establish the publication window or holiday calendar. |
 | [BCCR payments regulation](https://www.bccr.fi.cr/content/dam/bccr/sobre-bccr/gobierno-corporativo/reglamentos/reglamento-sistema-pagos.pdf) | Official indexed text defines reference rates using authorized entities' transactions with the public. | Full current reference methodology and subsequent amendments were not verified here. This is not evidence that indicator 317 copies MONEX. |
 
 Web-tool content may be cached. Page access is evidence about published content, not a working adapter or guaranteed fresh quote.
 
-## Selected candidate and mapping still needed
+## Confirmed mapping and implemented collector
 
-**Recommendation:** begin with the completed-session daily transaction-weighted average. Reconcile a small sample of matching completed dates between tables 748 and 770 before adopting a single series. Keep a running session average separate if it later becomes available; its changing aggregation window is not interchangeable with a completed-day value.
+The owner downloaded the official SDDE indicator catalog and successfully queried authenticated metadata and sample series. The catalog maps:
 
-Neither 748 nor 770 is a verified SDDE indicator code. Do not code an adapter using those numbers as indicator IDs.
+| Indicator | Meaning | SDDE table |
+| --- | --- | --- |
+| **3323** | Promedio Monex al cierre | 547, Tipo de cambio promedio MONEX |
+| **3439** | Promedio ponderado; description: Promedio Monex durante la sesión | 219, Resumen de negociación en MONEX |
 
-The [official SDDE guide](https://gee.bccr.fi.cr/indicadoreseconomicos/Documentos/DocumentosMetodologiasNotasTecnicas/Estandar_API_SDDE.pdf) documents authenticated catalog downloads, metadata and date-range series queries. Its MONEX example identifies 3434 as the first traded rate, not the weighted average. Examples are not live validation. Series examples contain dates and values; metadata's last-publication example is date-only. Neither supplies a verified per-observation intraday publication timestamp.
+Legacy webpage table numbers 748/770 are not SDDE table or indicator IDs. Indicator 3434 in the guide is the first traded rate, not the weighted average.
 
-The documented discovery route, relative to the existing SDDE base URL in [BCCR_SDDE.md](BCCR_SDDE.md), is:
+PR #9 implemented `python -m fx_lag.monex` for **3323 only**, preserving decimal values, effective dates, retrieval timestamps and separate CSV history. The owner reported a successful authenticated Python range query for October 20–23 and four CSV rows saved at `2026-10-23T23:55:03.537779Z`. Both 3323 and 3439 returned matching completed-day values in the earlier PowerShell sample. See [MONEX_COLLECTOR.md](MONEX_COLLECTOR.md) for exact values, commands and evidence limits.
 
-1. Download `/cuadro/descargar?idioma=ES` and `/indicadoresEconomicos/descargar?idioma=ES` as Excel catalogs.
-2. Find the exact MONEX table and weighted-average indicator. Record code, full name, units, frequency and catalog retrieval date.
-3. Use `/cuadro/{codigo}/metadata?idioma=ES` or `/indicadoresEconomicos/{codigo}/metadata?idioma=ES` with the catalog-confirmed code.
-4. Validate a short historical series through the documented series route and reconcile official table values.
+The owner subsequently confirmed the updated test run was OK; no exact updated Windows test count or elapsed time was supplied. The recorded development-environment result was 117 tests in 0.140s, all passing, with ResourceWarnings treated as errors. An earlier Windows run was 116 tests in 1.066s, OK with one skip.
 
-These are documented routes, not authenticated requests made during this research. Bearer credentials stay local; never paste a token into an issue or chat. Do not assume legacy table IDs equal SDDE table IDs. An authenticated catalog/metadata result is the next missing evidence, rather than a guessed endpoint.
+The [official SDDE guide](https://gee.bccr.fi.cr/indicadoreseconomicos/Documentos/DocumentosMetodologiasNotasTecnicas/Estandar_API_SDDE.pdf) documents catalog downloads, metadata and date-range series queries. The owner used `/indicadoresEconomicos/descargar?idioma=ES`, then indicator metadata/series routes. Credentials stayed local. Metadata provides daily frequency and a last-publication date, not a verified per-observation intraday publication time.
+
+**Still open:** 3439's refresh behavior during trading, publication times, revisions/finality, holiday behavior, complete history and repeated unattended reliability. Do not substitute its changing session window for a completed-day average. The implemented 3323 collector is manual; no MONEX schedule was installed.
 
 ## What timestamps can tell us
 
@@ -51,10 +53,10 @@ Daily history can support descriptive day-level associations, not reconstructed 
 ## Implementation sequence
 
 1. Keep the working BCCR collector and owner-selected weekday 09:00–17:00, 30-minute schedule unchanged. That schedule is a sampling choice, not a confirmed publication calendar or quota.
-2. Resolve MONEX catalog mapping and timestamps. The published noon–13:00 trading session may fit within sampling hours, but rate publication can occur outside it.
+2. Retain the confirmed MONEX mapping and owner-tested closing collector. Verify source timestamps and intraday behavior separately. The published noon–13:00 trading session may fit within sampling hours, but rate publication can occur outside it.
 3. Resolve automated access for the selected Promerica public page/feed; see [PROMERICA_SOURCES.md](PROMERICA_SOURCES.md). Robots guidance does not establish a data-use license. App matching is optional later execution-price research.
-4. Add separate adapters with offline fixtures only after contracts are verified. Extend storage with explicit series/statistic identity before combining sources; do not put MONEX or bank rates under indicator 317.
+4. Keep the implemented MONEX history separate under indicator 3323. Add a Promerica adapter with offline fixtures after its access/contract questions are resolved. Preserve explicit series identities before combining sources; do not put bank rates under indicator 317.
 5. Collect descriptive history before alert rules. Predeclare movement thresholds, matching horizons and baseline choices. Compare all three pairs; retain ambiguous order, reverse order, no response and excluded/missing cases.
 6. Report coverage, sample sizes and timing uncertainty before tendencies. Keep alerts and forecasts unimplemented until evidence and quality policies support them.
 
-The existing BCCR live successes are owner-reported and documented separately. No authenticated MONEX request, bank login, bank contact or live Promerica integration succeeded or was attempted in this research.
+BCCR reference and MONEX sample successes are owner-reported and documented separately. No bank login, bank contact or live Promerica integration was performed. The development environment did not execute authenticated bank requests.

@@ -145,3 +145,18 @@ A successful pilot demonstrates reliable, understandable information. It may fin
 ## Development and human review
 
 Use the [Codex and GitHub workflow](../README.md#how-we-will-build-with-codex-and-github): small scoped tasks, separate branches, descriptive commits, pull requests with validation evidence, and human review before merging. The Product Owner reviews business meaning and unresolved settings; technical review checks data semantics, calculations, privacy, and delivery behavior. Changes to prediction claims require reviewed historical evidence. Implementation PRs remain subject to human review before merging.
+
+## Implementation update: MONEX daily closing average
+
+A [MONEX CLI](MONEX_COLLECTOR.md) now implements SDDE indicator 3323 with separate
+local CSV history and offline tests. Owner-side authenticated PowerShell metadata
+and sample series succeeded for 3323 and 3439. The owner subsequently reported a
+successful Python 3323 range query and four-row CSV save. No intraday refresh interval or per-observation publication time
+is verified. No MONEX schedule or alert is implemented.
+
+The owner selected Promerica public branch compra for published-rate research,
+regardless of differences from their app quote. Study MONEX, BCCR reference compra
+and Promerica as separate series; MONEX → BCCR → Promerica is a hypothesis, not a
+required event order. Preserve reverse, ambiguous and absent responses. Public-rate
+proceeds are scenarios until executable-quote applicability is verified. The
+full-product rules above remain proposals, not evidence of a validated lag.
