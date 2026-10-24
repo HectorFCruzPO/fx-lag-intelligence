@@ -110,3 +110,21 @@ This spike contacted no institutional staff and makes no legal determination abo
 7. Predeclare comparison horizons and baselines, then measure false alarms, missed moves and lead-time distributions on held-out data. A useful predictive lag may not exist. Keep live movement alerts disabled until access, cadence, freshness and PRD quality requirements are resolved.
 
 For the beginner: an actual 1 CRC/USD Promerica compra change alters gross proceeds on USD 3,000 by CRC 3,000. A MONEX change of that size supplies only a hypothetical equal-movement scenario. It does not establish that Promerica changed or will change. No fixed lag or financial benefit has been demonstrated.
+
+## MONEX follow-up: owner-authenticated evidence, 2026-10-23
+
+The uploaded official catalog maps closing average **3323** to SDDE table **547**,
+and session weighted average **3439** to SDDE table **219**. The owner successfully
+queried metadata and series for both; all four 2026-10-20 through 2026-10-23 sample
+values match after the session. See [MONEX collector](MONEX_COLLECTOR.md) for exact
+values, evidence limits and setup. Earlier unknown-mapping notes above are
+historical. Legacy webpage table IDs 748/770 are not SDDE table IDs.
+
+The Python adapter uses only 3323. In addition to offline tests, the owner reported
+a successful authenticated Python query and four-row CSV save on 2026-10-23;
+retrieved_at was 2026-10-23T23:55:03.537779Z.
+No intraday refresh or publication time was established. The owner selected
+Promerica public branch compra for research even if it differs from the app;
+executable-price equivalence is not a prerequisite for that study. Automated
+Promerica access remains unresolved. Compare three distinct series without
+assuming causal order or a guaranteed lag.
