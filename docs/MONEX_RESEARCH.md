@@ -36,7 +36,7 @@ The owner subsequently confirmed the updated test run was OK; no exact updated W
 
 The [official SDDE guide](https://gee.bccr.fi.cr/indicadoreseconomicos/Documentos/DocumentosMetodologiasNotasTecnicas/Estandar_API_SDDE.pdf) documents catalog downloads, metadata and date-range series queries. The owner used `/indicadoresEconomicos/descargar?idioma=ES`, then indicator metadata/series routes. Credentials stayed local. Metadata provides daily frequency and a last-publication date, not a verified per-observation intraday publication time.
 
-**Still open:** 3439's refresh behavior during trading, publication times, revisions/finality, holiday behavior, complete history and repeated unattended reliability. Do not substitute its changing session window for a completed-day average. The implemented 3323 collector is manual; no MONEX schedule was installed.
+**Still open:** 3439's refresh behavior during trading, publication times, revisions/finality, holiday behavior, complete history and repeated unattended reliability. Do not substitute its changing session window for a completed-day average. The 3323 collector now has optional scheduling code; see [MARKET_AUTOMATION.md](MARKET_AUTOMATION.md). No new task has been installed in development.
 
 ## What timestamps can tell us
 

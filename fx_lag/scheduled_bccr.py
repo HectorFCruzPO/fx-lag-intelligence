@@ -1,4 +1,4 @@
-"""One guarded BCCR collection attempt for Windows Task Scheduler.
+"""One guarded market collection attempt for Windows Task Scheduler.
 
 Collection window: Monday–Friday, 09:00 through the 17:00 slot, Costa Rica time.
 The window is a user preference, not a verified market/publication calendar.
@@ -6,7 +6,7 @@ The window is a user preference, not a verified market/publication calendar.
 from __future__ import annotations
 
 import argparse
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from datetime import datetime, time, timedelta, timezone
 from email.utils import parsedate_to_datetime
 import json
@@ -15,14 +15,14 @@ from pathlib import Path
 import sys
 import tempfile
 
-from . import bccr_sdde as sdde
+from . import bccr_sdde as sdde, monex, promerica
 from .csv_history import HistoryError, save_observations
 
 # Costa Rica currently uses UTC-06:00 year-round; no Windows tzdata dependency.
 COSTA_RICA = timezone(timedelta(hours=-6), "America/Costa_Rica")
 UTC = timezone.utc
 STATE_FIELDS = {"version", "last_slot", "last_attempt", "status", "blocked_until"}
-STATUSES = {"started", "saved", "partial", "error", "rate_limited"}
+STATUSES = {"started", "saved", "partial", "error", "rate_limited", "access_blocked"}
 
 
 class ScheduleError(Exception):
@@ -149,8 +149,10 @@ def runner_lock(path: Path):
                 raise ScheduleError("Schedule lock cleanup failed; inspect the lock before resuming.") from None
 
 
-def run_once(data_dir: str | Path = "data", timeout: float = 30, *, now: datetime | None = None) -> dict:
-    """Attempt at most one current-local-date query, persisting an HTTP 429 pause."""
+def run_once(data_dir: str | Path = "data", timeout: float = 30, *, now: datetime | None = None, source: str = "bccr") -> dict:
+    """One guarded source poll; dated BCCR series use the current local date."""
+    if source not in ("bccr", "monex", "promerica"):
+        raise ScheduleError("Unsupported scheduled source.")
     current = now if now is not None else utc_now()
     if current.tzinfo is None or current.utcoffset() is None:
         raise ScheduleError("The schedule clock must include a timezone.")
@@ -160,10 +162,22 @@ def run_once(data_dir: str | Path = "data", timeout: float = 30, *, now: datetim
     root = Path(data_dir)
     try:
         root.mkdir(parents=True, exist_ok=True)
-        with runner_lock(root / "bccr-schedule.lock"):
-            path = root / "bccr-schedule.json"
+        api_lock = runner_lock(root / "sdde-schedule.lock") if source in ("bccr", "monex") else nullcontext()
+        with runner_lock(root / f"{source}-schedule.lock"), api_lock:
+            path = root / f"{source}-schedule.json"
+            # Both BCCR-hosted collectors use the same token and must honor a
+            # persisted pause from either series, even after restarting.
+            if source in ("bccr", "monex"):
+                other = "monex" if source == "bccr" else "bccr"
+                peer = read_state(root / f"{other}-schedule.json")
+                if peer and peer["status"] == "started":
+                    raise ScheduleError("A BCCR-hosted peer attempt did not finish safely; inspect its state before resuming.")
+                if peer and peer["blocked_until"] and current < parse_utc(peer["blocked_until"]):
+                    return {"status": "paused", "resume_at": peer["blocked_until"]}
             state = read_state(path)
             if state is not None:
+                if state["status"] == "access_blocked":
+                    return {"status": "access_blocked"}
                 if state["status"] == "started":
                     raise ScheduleError("A previous attempt did not finish safely; no request sent. Inspect state before resuming.")
                 if state["blocked_until"] is not None and current < parse_utc(state["blocked_until"]):
@@ -182,14 +196,29 @@ def run_once(data_dir: str | Path = "data", timeout: float = 30, *, now: datetim
             write_state(path, state)
             try:
                 effective = current.astimezone(COSTA_RICA).date()
-                result = sdde.collect(effective, effective, timeout)
-                saved = save_observations(root / "bccr-history.csv", result["observations"], source_url=sdde.ENDPOINT)
+                if source == "bccr":
+                    result = sdde.collect(effective, effective, timeout)
+                    saved = save_observations(root / "bccr-history.csv", result["observations"], source_url=sdde.ENDPOINT)
+                elif source == "monex":
+                    result = monex.collect(effective, effective, timeout)
+                    saved = save_observations(root / "monex-history.csv", result["observations"], source_url=monex.ENDPOINT, indicator=3323)
+                else:
+                    result = promerica.collect(timeout)
+                    saved = save_observations(root / "promerica-history.csv", result["observations"], source_url=promerica.URL, indicator=promerica.SERIES)
             except sdde.RateLimitError as error:
                 finished = current if now is not None else utc_now()
                 state["status"] = "rate_limited"
                 state["blocked_until"] = timestamp(cooldown_until(finished, error.retry_after))
                 write_state(path, state)
                 return {"status": "rate_limited", "resume_at": state["blocked_until"]}
+            except sdde.AuthenticationError:
+                if source == "promerica":
+                    state["status"] = "access_blocked"
+                    write_state(path, state)
+                    return {"status": "access_blocked"}
+                state["status"] = "error"
+                write_state(path, state)
+                return {"status": "error", "message": "SDDE access rejected; check token and subscription."}
             except (sdde.CollectorError, HistoryError):
                 state["status"] = "error"
                 write_state(path, state)
@@ -203,17 +232,18 @@ def run_once(data_dir: str | Path = "data", timeout: float = 30, *, now: datetim
 
 
 def main(argv=None) -> int:
-    parser = argparse.ArgumentParser(description="One BCCR run: weekdays 09:00–17:00 Costa Rica time, 30-minute slots, durable 429 pause.")
+    parser = argparse.ArgumentParser(description="One source run: weekdays 09:00–17:00 Costa Rica time, 30-minute slots, durable 429 pause.")
     parser.add_argument("--data-dir", default="data", help="Persistent schedule state and CSV directory (default: data)")
     parser.add_argument("--timeout", type=float, default=30, help="Network socket timeout (seconds)")
+    parser.add_argument("--source", choices=("bccr", "monex", "promerica"), default="bccr")
     args = parser.parse_args(argv)
     try:
-        result = run_once(args.data_dir, args.timeout)
+        result = run_once(args.data_dir, args.timeout) if args.source == "bccr" else run_once(args.data_dir, args.timeout, source=args.source)
     except ScheduleError as error:
         print(f"Error: {error}", file=sys.stderr)
         return 1
     print(json.dumps(result))
-    return 1 if result["status"] in ("error", "partial") else (2 if result["status"] == "rate_limited" else 0)
+    return 1 if result["status"] in ("error", "partial", "access_blocked") else (2 if result["status"] == "rate_limited" else 0)
 
 
 if __name__ == "__main__":

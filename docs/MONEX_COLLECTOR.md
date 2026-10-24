@@ -96,8 +96,9 @@ After using the command, remove the session token when no longer needed:
 Remove-Item Env:BCCR_SDDE_TOKEN -ErrorAction SilentlyContinue
 ```
 
-The existing scheduled task loads its protected token independently. This feature
-does not install a MONEX task or change the BCCR weekday schedule. The manual
+The existing scheduled task loads its protected token independently. The manual collector
+does not install a task. Optional scheduling is now available separately in
+[MARKET_AUTOMATION.md](MARKET_AUTOMATION.md); BCCR triggers remain unchanged. The manual
 command does not share the scheduler's persistent HTTP 429 pause: if it reports
 429, stop manual requests and respect the existing pause/Retry-After guidance.
 There are no automatic retries. Numeric request limits remain unverified.
@@ -207,5 +208,13 @@ Existing SOAP HTTP 500 parsing and closure remain covered by the full suite.
 The owner must rerun the updated suite to confirm cleanup on Python 3.14/Windows.
 
 Publication times, intraday behavior, holiday coverage, historical completeness,
-revisions and repeated unattended reliability remain unverified. This feature
-still installs no MONEX schedule and makes no predictive or lag claim.
+revisions and repeated unattended reliability remain unverified. The manual collector
+installs no task. Optional scheduling is now available separately; no predictive
+or lag claim is made.
+
+## Optional scheduling follow-up
+
+A guarded MONEX task can now be installed using the
+[market automation guide](MARKET_AUTOMATION.md). It preserves the closing-series
+identity and shares a persistent provider pause with BCCR 317. Installation and
+repeated unattended operation still need owner-side validation.

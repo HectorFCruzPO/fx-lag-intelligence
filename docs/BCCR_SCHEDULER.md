@@ -161,3 +161,12 @@ Keep `data/bccr-schedule.json` and the CSV when reinstalling. **Do not delete/ed
 For recovery, first disable the task, confirm no collection process is running, back up state/history, and inspect the error. Restore a trusted state that preserves any 429 deadline. If an interrupted attempt has unknown outcome, do not immediately reset it; determine a safe restart time before repairing state. Share sanitized status/errors for help, never the token or DPAPI file. Disk-write failures can leave a `.tmp` file. The runner persists `started` before contacting BCCR so failure to save a later 429 state remains fail-closed.
 
 Use the same schedule state/CSV paths for every scheduled launch. The state/locks are intended for one local computer and cooperating processes, not shared network storage or protection against deliberate manual modification. The first owner-reported end-to-end Windows run is recorded below. Repeated unattended operation, reboot recovery and a real HTTP 429 pause/resumption still require live observation.
+
+## Additional collectors
+
+[Market automation](MARKET_AUTOMATION.md) adds optional MONEX and Promerica tasks.
+BCCR's existing task name/triggers stay unchanged. The updated Python runner
+serializes BCCR-hosted scheduled requests and honors persisted 429 pauses from
+either BCCR reference or MONEX state. A corrupt/interrupted peer state fails
+closed. Promerica has independent state and no BCCR credentials. Manual commands
+still bypass scheduling guards: never use them to evade a persisted pause.

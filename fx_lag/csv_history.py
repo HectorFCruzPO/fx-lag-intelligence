@@ -19,20 +19,26 @@ class HistoryError(Exception):
     """Safe storage failure; never includes raw row content or system errors."""
 
 
-def validated_row(observation: dict, source_url: str, indicator: int = 317) -> dict:
+def validated_row(observation: dict, source_url: str, indicator: int | str = 317) -> dict:
     """Reject corrupt/foreign rows rather than silently changing a history file."""
     try:
-        if type(indicator) is not int or indicator not in (317, 3323):
+        public = indicator == "promerica_branch_usd_compra"
+        if not public and (type(indicator) is not int or indicator not in (317, 3323)):
+            raise ValueError
+        if public and source_url != "https://www.promerica.fi.cr/tipo-de-cambio-sucursales/":
             raise ValueError
         if not isinstance(observation, dict) or set(observation) != set(FIELDS):
             raise ValueError
         row = dict(observation)
+        if public and row["effective_date"] is None:
+            row["effective_date"] = ""
         if type(row["indicator"]) is int:
             row["indicator"] = str(row["indicator"])
         if any(not isinstance(value, str) for value in row.values()):
             raise ValueError
         if (row["source"], row["interface"], row["indicator"], row["units"], row["source_url"]) != (
-            "BCCR", "SDDE", str(indicator), "CRC/USD", source_url,
+            "Promerica" if public else "BCCR", "PUBLIC_WEB" if public else "SDDE",
+            str(indicator), "CRC/USD", source_url,
         ):
             raise ValueError
         # Accept decimal/scientific notation emitted by Decimal, never formulas.
@@ -41,7 +47,10 @@ def validated_row(observation: dict, source_url: str, indicator: int = 317) -> d
         rate = Decimal(row["rate"])
         if not rate.is_finite() or rate <= 0:
             raise ValueError
-        if date.fromisoformat(row["effective_date"]).isoformat() != row["effective_date"]:
+        if public:
+            if row["effective_date"] != "":
+                raise ValueError  # No source effective date is supplied by this page.
+        elif date.fromisoformat(row["effective_date"]).isoformat() != row["effective_date"]:
             raise ValueError
         stamp = row["retrieved_at"]
         if "T" not in stamp:
@@ -61,7 +70,7 @@ def observation_key(row: dict) -> tuple:
             datetime.fromisoformat(row["retrieved_at"].replace("Z", "+00:00")))
 
 
-def read_history(path: Path, source_url: str, indicator: int = 317) -> list[dict]:
+def read_history(path: Path, source_url: str, indicator: int | str = 317) -> list[dict]:
     if path.is_symlink():
         raise HistoryError("CSV destination must not be a symbolic link.")
     if not path.exists():
@@ -79,7 +88,7 @@ def read_history(path: Path, source_url: str, indicator: int = 317) -> list[dict
     return rows
 
 
-def save_observations(path: str | Path, observations: list[dict], *, source_url: str, indicator: int = 317) -> dict:
+def save_observations(path: str | Path, observations: list[dict], *, source_url: str, indicator: int | str = 317) -> dict:
     """Atomically add observations, retaining every distinct retrieval timestamp.
 
     Cooperating writers use an exclusive sidecar lock. This is a small local

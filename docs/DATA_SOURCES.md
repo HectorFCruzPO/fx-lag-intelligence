@@ -134,3 +134,15 @@ Promerica public branch compra for research even if it differs from the app;
 executable-price equivalence is not a prerequisite for that study. Automated
 Promerica access remains unresolved. Compare three distinct series without
 assuming causal order or a guaranteed lag.
+
+## Public-page and scheduling follow-up, 2026-10-24
+
+At the owner's request, [market automation](MARKET_AUTOMATION.md) adds a MONEX
+schedule and a Promerica direct public-branch-page prototype with optional
+scheduling. No bank reply is required by the code. Promerica API availability,
+automated-use entitlement and numeric polling limits are still unverified; the
+public path is not excluded by the robots file reviewed on this date. No login,
+restricted history route or private financial endpoint is used. Tests use
+synthetic HTML; the Python public-page collector needs live validation. Source
+effective/publication timestamps remain unknown and are not filled from retrieval
+time. Earlier unimplemented-source statements above are historical.
