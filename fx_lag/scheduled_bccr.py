@@ -200,7 +200,9 @@ def run_once(data_dir: str | Path = "data", timeout: float = 30, *, now: datetim
                     result = sdde.collect(effective, effective, timeout)
                     saved = save_observations(root / "bccr-history.csv", result["observations"], source_url=sdde.ENDPOINT)
                 elif source == "monex":
-                    result = monex.collect(effective, effective, timeout)
+                    days_back = 3 if effective.weekday() == 0 else 1
+                    latest_completed_day = effective - timedelta(days=days_back)
+                    result = monex.collect(latest_completed_day, latest_completed_day, timeout)
                     saved = save_observations(root / "monex-history.csv", result["observations"], source_url=monex.ENDPOINT, indicator=3323)
                 else:
                     result = promerica.collect(timeout)
