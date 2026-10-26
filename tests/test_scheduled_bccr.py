@@ -253,6 +253,75 @@ class RateLimitTransportTests(unittest.TestCase):
         self.assertEqual(caught.exception.retry_after, "3600")
         self.assertNotIn("secret", str(caught.exception))
 
+class MonexScheduleTests(unittest.TestCase):
+    def test_monday_uses_latest_published_closing_rate(self):
+        now = local("2026-10-26", "09:00:00")
+        friday = now.date() - timedelta(days=3)
 
+        observation = {
+            "source": "BCCR",
+            "interface": "SDDE",
+            "source_url": schedule.monex.ENDPOINT,
+            "indicator": 3323,
+            "rate": "454.31000000",
+            "units": "CRC/USD",
+            "effective_date": friday.isoformat(),
+            "retrieved_at": schedule.timestamp(now),
+        }
+
+        with TemporaryDirectory() as directory:
+            with patch(
+                "fx_lag.scheduled_bccr.monex.collect",
+                return_value={
+                    "observations": [observation],
+                    "missing_dates": [],
+                },
+            ) as collect:
+                outcome = schedule.run_once(
+                    Path(directory),
+                    now=now,
+                    source="monex",
+                )
+
+            self.assertEqual(outcome["status"], "saved")
+            self.assertEqual(
+                collect.call_args.args[0],
+                friday,
+            )
+            self.assertEqual(
+                collect.call_args.args[1],
+                friday,
+            )
+
+            history = (Path(directory) / "monex-history.csv").read_text()
+            self.assertIn("2026-10-23", history)
+            self.assertIn("454.31000000", history)
+
+    def test_monday_skips_weekend_dates(self):
+        now = local("2026-10-26", "09:00:00")
+
+        with TemporaryDirectory() as directory:
+            with patch(
+                "fx_lag.scheduled_bccr.monex.collect",
+                return_value={
+                    "observations": [],
+                    "missing_dates": [],
+                },
+            ) as collect:
+                schedule.run_once(
+                    Path(directory), now=now, source="monex"
+                )
+
+            for api_call in collect.call_args_list:
+                start_date, end_date = api_call.args[:2]
+
+                current_date = start_date
+                while current_date <= end_date:
+                    self.assertLess(
+                        current_date.weekday(),
+                        5,
+                        f"MONEX request includes weekend: {current_date}",
+                    )
+                    current_date += timedelta(days=1)
 if __name__ == "__main__":
     unittest.main()

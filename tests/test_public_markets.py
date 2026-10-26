@@ -205,7 +205,7 @@ class AdditionalScheduleTests(unittest.TestCase):
         self.assertEqual(runner.run_once(self.root, now=NOW + timedelta(minutes=30), source='monex')['status'], 'saved')
         self.assertTrue((self.root / 'monex-history.csv').exists())
         self.assertFalse((self.root / 'bccr-history.csv').exists())
-        collect.assert_called_with(NOW.date(), NOW.date(), 30)
+        collect.assert_called_with(NOW.date() - timedelta(days=3), NOW.date() - timedelta(days=3), 30)
         self.assertEqual(collect.call_count, 2)
 
     @patch('fx_lag.scheduled_bccr.sdde.collect', side_effect=lambda *args: market_result(317))
