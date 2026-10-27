@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FX Lag Intelligence</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  
+<div id="brand-loader" class="brand-loader" role="status" aria-label="Loading FX Lag Intelligence">
+  <div class="brand-content">
+    <svg class="brand-symbol" viewBox="0 0 360 210" aria-hidden="true">
+      <path class="draw stroke-1" d="M125 25 L48 160" />
+      <path class="draw stroke-2" d="M208 22 L130 190" />
+      <path class="draw stroke-3" d="M38 147 Q127 98 220 91" />
+      <path class="draw stroke-4" d="M272 100 L256 158" />
+      <path class="draw stroke-5" d="M233 133 L304 120" />
+    </svg>
+    <div class="brand-line"></div>
+    <div class="brand-name"><span id="typed-brand"></span><span class="brand-cursor">|</span></div>
+  </div>
+</div>
+
+  <h1>FX Lag Intelligence</h1>
+  <p>USD / CRC Exchange Rate Monitor</p>
+
+  <h2>Market Rates</h2>
+
+  <section>
+    <h3>1. MONEX</h3>
+    <p>Wholesale closing average</p>
+    <p id="monex-rate">Rate: Loading...</p>
+    <small id="monex-date"></small>
+  </section>
+
+  <section>
+    <h3>2. BCCR</h3>
+    <p>Reference compra</p>
+    <p id="bccr-rate">Rate: Loading...</p>
+   <small id="bccr-date"></small>>
+  </section>
+
+  <section>
+    <h3>3. Banco Promerica</h3>
+    <p>Bank compra</p>
+    <p id="promerica-rate">Rate: Loading...</p>
+    <small id="promerica-date"></small>
+  </section>
+
+<div class="history-panel">
+  <h2>USD/CRC Exchange Rate History</h2>
+  <p>MONEX → BCCR → Promerica</p>
+  <div class="chart-container">
+    <canvas id="history-chart"></canvas>
+  </div>
+  <p id="chart-status">Loading historical data...</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

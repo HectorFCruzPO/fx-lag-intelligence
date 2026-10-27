@@ -1,0 +1,188 @@
+
+:root {
+  color-scheme: dark;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #0b1220;
+  color: #f1f5f9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 48px 6%;
+  max-width: 1440px;
+  margin-inline: auto;
+}
+
+h1 {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
+h2 {
+  margin-top: 48px;
+  font-size: 22px;
+}
+
+body > p {
+  color: #94a3b8;
+}
+
+section {
+  display: inline-block;
+  vertical-align: top;
+  width: calc(33.333% - 16px);
+  min-width: 220px;
+  margin: 12px 12px 0 0;
+  padding: 24px;
+  background: #172235;
+  border: 1px solid #334155;
+  border-radius: 16px;
+}
+
+section h3 {
+  margin-top: 0;
+  font-size: 20px;
+}
+
+section p {
+  color: #94a3b8;
+}
+
+section p:last-child {
+  color: #f8fafc;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+@media (max-width: 800px) {
+  section {
+    display: block;
+    width: 100%;
+    margin-right: 0;
+  }
+}
+
+/* H+ Development loading screen */
+.brand-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  transition: opacity 0.7s ease;
+}
+
+.brand-loader.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.brand-content {
+  width: min(80vw, 500px);
+  text-align: center;
+}
+
+.brand-symbol {
+  width: 100%;
+  height: 220px;
+  overflow: visible;
+}
+
+.draw {
+  fill: none;
+  stroke: white;
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  animation: draw-stroke 0.5s ease forwards;
+}
+
+.stroke-1 { animation-delay: 0.2s; }
+.stroke-2 { animation-delay: 0.7s; }
+.stroke-3 { animation-delay: 1.2s; }
+.stroke-4 { animation-delay: 1.7s; }
+.stroke-5 { animation-delay: 2.2s; }
+
+@keyframes draw-stroke {
+  to { stroke-dashoffset: 0; }
+}
+
+.brand-line {
+  height: 3px;
+  width: 100%;
+  background: #a67c2e;
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: draw-line 0.6s ease forwards;
+  animation-delay: 2.7s;
+}
+
+@keyframes draw-line {
+  to { transform: scaleX(1); }
+}
+
+.brand-name {
+  margin-top: 24px;
+  min-height: 60px;
+  color: white;
+  font-family: Consolas, monospace;
+  font-size: clamp(24px, 5vw, 42px);
+  letter-spacing: 2px;
+}
+
+.brand-cursor {
+  animation: blink 0.7s step-end infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* Historical exchange-rate chart */
+
+.history-panel {
+  margin-top: 40px;
+  padding: 28px;
+  background: #172235;
+  border: 1px solid #334155;
+  border-radius: 16px;
+}
+
+.history-panel h2 {
+  margin-top: 0;
+}
+
+.history-panel > p {
+  color: #94a3b8;
+}
+
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  margin-top: 24px;
+}
+
+#chart-status {
+  margin-top: 16px;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+@media (max-width: 800px) {
+  .history-panel {
+    padding: 16px;
+  }
+
+  .chart-container {
+    height: 280px;
+  }
+}
