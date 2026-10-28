@@ -29,10 +29,97 @@ document.addEventListener("DOMContentLoaded", () => {
   }, animationEnd);
 });
 
-/* Display the latest exchange rates */
+
+/* Display latest rates, changes, and data freshness */
+
+function formatCostaRicaTime(timestamp) {
+  if (!timestamp) return "Unavailable";
+
+  const date = new Date(timestamp);
+
+  if (Number.isNaN(date.getTime())) {
+    return "Unavailable";
+  }
+
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Costa_Rica",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true
+  }).format(date);
+}
+
+function displayRateChange(source, observations) {
+  const element = document.getElementById(`${source}-change`);
+  if (!element) return;
+
+  const valid = (observations || [])
+    .filter(item =>
+      Number.isFinite(item.rate) &&
+      Number.isFinite(Date.parse(item.retrieved_at))
+    )
+    .sort((a, b) =>
+      Date.parse(a.retrieved_at) - Date.parse(b.retrieved_at)
+    );
+
+  // MONEX and BCCR: compare consecutive effective dates.
+  // Promerica: compare the latest rate with the previous
+  // different collected rate.
+  let current;
+  let previous;
+
+  if (source === "promerica") {
+    current = valid.at(-1);
+    previous = valid.slice(0, -1)
+      .reverse()
+      .find(item => item.rate !== current?.rate);
+  } else {
+    const byDate = new Map();
+
+    for (const item of valid) {
+      if (item.effective_date) {
+        byDate.set(item.effective_date, item);
+      }
+    }
+
+    const ordered = [...byDate.values()]
+      .sort((a, b) =>
+        a.effective_date.localeCompare(b.effective_date)
+      );
+
+    current = ordered.at(-1);
+    previous = ordered.at(-2);
+  }
+
+  element.classList.remove("rate-up", "rate-down", "rate-flat");
+
+  if (!current || !previous) {
+    element.textContent = "Change unavailable";
+    element.classList.add("rate-flat");
+    return;
+  }
+
+  const change = current.rate - previous.rate;
+  const amount = Math.abs(change).toFixed(2);
+
+  if (Math.abs(change) < 0.005) {
+    element.textContent = "→ No change";
+    element.classList.add("rate-flat");
+  } else if (change > 0) {
+    element.textContent = `↑ +₡${amount}`;
+    element.classList.add("rate-up");
+  } else {
+    element.textContent = `↓ -₡${amount}`;
+    element.classList.add("rate-down");
+  }
+}
 
 async function loadExchangeRates() {
   const sources = ["monex", "bccr", "promerica"];
+  const updatedElement = document.getElementById("last-updated");
 
   try {
     const response = await fetch("rates.json", {
@@ -44,6 +131,7 @@ async function loadExchangeRates() {
     }
 
     const data = await response.json();
+    const timestamps = [];
 
     for (const source of sources) {
       const rateElement = document.getElementById(`${source}-rate`);
@@ -55,34 +143,49 @@ async function loadExchangeRates() {
       if (!observation || !Number.isFinite(observation.rate)) {
         rateElement.textContent = "Rate unavailable";
         dateElement.textContent = "";
+        displayRateChange(source, []);
         continue;
       }
 
-      rateElement.textContent =
-        `₡${observation.rate.toFixed(2)}`;
+      rateElement.textContent = `\u20A1${observation.rate.toFixed(2)}`;
 
       if (observation.effective_date) {
         dateElement.textContent =
           `Effective date: ${observation.effective_date}`;
       } else {
-        const retrieved = new Date(observation.retrieved_at);
-
-        dateElement.textContent = Number.isNaN(retrieved.getTime())
-          ? "Retrieval date unavailable"
-          : `Retrieved: ${retrieved.toLocaleString("en-CR", {
-              timeZone: "America/Costa_Rica"
-            })}`;
+        dateElement.textContent =
+          `Retrieved: ${formatCostaRicaTime(observation.retrieved_at)}`;
       }
+
+      const timestamp = Date.parse(observation.retrieved_at);
+      if (Number.isFinite(timestamp)) {
+        timestamps.push(timestamp);
+      }
+
+      displayRateChange(source, data.history?.[source] || []);
     }
+
+    if (updatedElement) {
+      updatedElement.textContent = timestamps.length
+        ? `Data last collected: ${formatCostaRicaTime(
+            new Date(Math.max(...timestamps)).toISOString()
+          )} (Costa Rica)`
+        : "Data last collected: Unavailable";
+    }
+
   } catch (error) {
     console.error("Exchange-rate loading failed:", error);
 
+    if (updatedElement) {
+      updatedElement.textContent = "Data last collected: Unavailable";
+    }
+
     for (const source of sources) {
       const rateElement = document.getElementById(`${source}-rate`);
+      const changeElement = document.getElementById(`${source}-change`);
 
-      if (rateElement) {
-        rateElement.textContent = "Rate unavailable";
-      }
+      if (rateElement) rateElement.textContent = "Rate unavailable";
+      if (changeElement) changeElement.textContent = "Change unavailable";
     }
   }
 }
