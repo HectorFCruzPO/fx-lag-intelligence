@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  
+
 <div id="brand-loader" class="brand-loader" role="status" aria-label="Loading FX Lag Intelligence">
   <div class="brand-content">
     <svg class="brand-symbol" viewBox="0 0 360 210" aria-hidden="true">
@@ -23,35 +23,42 @@
   </div>
 </div>
 
-  <h1>FX Lag Intelligence</h1>
-  <p>USD / CRC Exchange Rate Monitor</p>
+<h1>FX Lag Intelligence</h1>
+<p>USD / CRC Exchange Rate Monitor</p>
 
-  <h2>Market Rates</h2>
+<p id="last-updated" aria-live="polite">
+  Data last updated: Loading...
+</p>
 
-  <section>
-    <h3>1. MONEX</h3>
-    <p>Wholesale closing average</p>
-    <p id="monex-rate">Rate: Loading...</p>
-    <small id="monex-date"></small>
-  </section>
+<h2>Market Rates</h2>
 
-  <section>
-    <h3>2. BCCR</h3>
-    <p>Reference compra</p>
-    <p id="bccr-rate">Rate: Loading...</p>
-   <small id="bccr-date"></small>>
-  </section>
+<section>
+  <h3>1. MONEX</h3>
+  <p>Wholesale closing average</p>
+  <p id="monex-rate">Rate: Loading...</p>
+  <p id="monex-change" class="rate-change">Calculating change...</p>
+  <small id="monex-date"></small>
+</section>
 
-  <section>
-    <h3>3. Banco Promerica</h3>
-    <p>Bank compra</p>
-    <p id="promerica-rate">Rate: Loading...</p>
-    <small id="promerica-date"></small>
-  </section>
+<section>
+  <h3>2. BCCR</h3>
+  <p>Reference compra</p>
+  <p id="bccr-rate">Rate: Loading...</p>
+  <p id="bccr-change" class="rate-change">Calculating change...</p>
+  <small id="bccr-date"></small>
+</section>
+
+<section>
+  <h3>3. Banco Promerica</h3>
+  <p>Bank compra</p>
+  <p id="promerica-rate">Rate: Loading...</p>
+  <p id="promerica-change" class="rate-change">Calculating change...</p>
+  <small id="promerica-date"></small>
+</section>
 
 <div class="history-panel">
   <h2>USD/CRC Exchange Rate History</h2>
-  <p>MONEX → BCCR → Promerica</p>
+  <p>MONEX &rarr; BCCR &rarr; Promerica</p>
   <div class="chart-container">
     <canvas id="history-chart"></canvas>
   </div>
