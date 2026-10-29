@@ -1,8 +1,10 @@
-
+﻿
 import argparse
 import json
+import msvcrt
 import subprocess
 import sys
+from contextlib import contextmanager
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -11,6 +13,28 @@ PUBLISH_JSON = PUBLISH_REPO / "dashboard" / "rates.json"
 
 sys.path.insert(0, str(ROOT / "dashboard"))
 from export_rates import SOURCES, build_source
+@contextmanager
+def publisher_lock():
+    lock_path = PUBLISH_REPO.parent / "publisher.lock"
+
+    with open(lock_path, "a+b") as lock_file:
+        lock_file.seek(0)
+        lock_file.write(b"\0")
+        lock_file.flush()
+        lock_file.seek(0)
+
+        try:
+            msvcrt.locking(lock_file.fileno(), msvcrt.LK_NBLCK, 1)
+        except OSError:
+            raise RuntimeError(
+                "Another publisher process is already running."
+            ) from None
+
+        try:
+            yield
+        finally:
+            lock_file.seek(0)
+            msvcrt.locking(lock_file.fileno(), msvcrt.LK_UNLCK, 1)
 
 
 def git(*args):
@@ -97,6 +121,29 @@ def main():
                 f"{len(history[name])} observations, but the "
                 f"published dashboard has {len(previous)}. "
                 "Publishing stopped to prevent data loss."
+             )
+        # Protect historical observation dates and timestamps.
+        # Existing observations may be corrected, but their
+        # identifying dates or timestamps must not disappear.
+        def observation_key(item):
+            if name == "promerica":
+                return item.get("retrieved_at")
+            return item.get("effective_date")
+
+        previous_keys = {
+            observation_key(item) for item in previous
+        }
+        current_keys = {
+            observation_key(item) for item in history[name]
+        }
+
+        missing_keys = previous_keys - current_keys
+
+        if missing_keys:
+            raise RuntimeError(
+                f"Historical data protection: {name} is missing "
+                f"{len(missing_keys)} previously published "
+                "observation(s). Publishing stopped."
             )
 
     if (
@@ -131,4 +178,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    with publisher_lock():
+        main()
