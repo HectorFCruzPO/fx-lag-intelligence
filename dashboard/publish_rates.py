@@ -85,8 +85,23 @@ def main():
         ).stdout.strip()
 
         if int(unpublished) > 0:
-            # Do not push if the remote has diverged.
-            git("merge-base", "--is-ancestor", "origin/main", "HEAD")
+            # Recover only when the remote is an ancestor.
+            # Otherwise stop safely for manual review.
+            remote_is_ancestor = subprocess.run(
+                [
+                    "git", "-C", str(PUBLISH_REPO),
+                    "merge-base", "--is-ancestor",
+                    "origin/main", "HEAD",
+                ],
+                capture_output=True,
+            )
+
+            if remote_is_ancestor.returncode != 0:
+                raise RuntimeError(
+                    "Publishing stopped: local and remote Git "
+                    "history require manual review."
+                )
+
             git("push", "origin", "main")
             print(f"Recovered {unpublished} unpublished commit(s).")
 
