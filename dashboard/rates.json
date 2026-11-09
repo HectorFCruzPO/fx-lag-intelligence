@@ -1,22 +1,22 @@
 {
-  "generated_at": "2026-11-03T15:05:17.762938+00:00",
+  "generated_at": "2026-11-09T15:05:24.260090+00:00",
   "sources": {
     "monex": {
-      "rate": 452.43,
-      "effective_date": "2026-11-02",
-      "retrieved_at": "2026-11-03T15:00:46.906352+00:00",
+      "rate": 449.58,
+      "effective_date": "2026-11-06",
+      "retrieved_at": "2026-11-09T15:00:49.523576+00:00",
       "units": "CRC/USD"
     },
     "bccr": {
-      "rate": 448.98,
-      "effective_date": "2026-11-03",
-      "retrieved_at": "2026-11-03T15:00:04.612966+00:00",
+      "rate": 446.56,
+      "effective_date": "2026-11-09",
+      "retrieved_at": "2026-11-09T15:00:08.073171+00:00",
       "units": "CRC/USD"
     },
     "promerica": {
-      "rate": 441.0,
+      "rate": 438.0,
       "effective_date": null,
-      "retrieved_at": "2026-11-03T15:00:23.020789+00:00",
+      "retrieved_at": "2026-11-09T15:00:25.357530+00:00",
       "units": "CRC/USD"
     }
   },
@@ -79,7 +79,31 @@
       {
         "rate": 452.43,
         "effective_date": "2026-11-02",
-        "retrieved_at": "2026-11-03T15:00:46.906352+00:00",
+        "retrieved_at": "2026-11-03T23:00:46.878045+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 452.62,
+        "effective_date": "2026-11-03",
+        "retrieved_at": "2026-11-04T23:00:46.968255+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 452.01,
+        "effective_date": "2026-11-04",
+        "retrieved_at": "2026-11-05T23:00:47.001714+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 450.26,
+        "effective_date": "2026-11-05",
+        "retrieved_at": "2026-11-06T23:00:46.829816+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 449.58,
+        "effective_date": "2026-11-06",
+        "retrieved_at": "2026-11-09T15:00:49.523576+00:00",
         "units": "CRC/USD"
       }
     ],
@@ -135,7 +159,31 @@
       {
         "rate": 448.98,
         "effective_date": "2026-11-03",
-        "retrieved_at": "2026-11-03T15:00:04.612966+00:00",
+        "retrieved_at": "2026-11-03T23:00:02.229912+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 450.31,
+        "effective_date": "2026-11-04",
+        "retrieved_at": "2026-11-04T23:00:02.291649+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 449.63,
+        "effective_date": "2026-11-05",
+        "retrieved_at": "2026-11-05T23:00:02.466816+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 448.27,
+        "effective_date": "2026-11-06",
+        "retrieved_at": "2026-11-06T23:00:04.181396+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 446.56,
+        "effective_date": "2026-11-09",
+        "retrieved_at": "2026-11-09T15:00:08.073171+00:00",
         "units": "CRC/USD"
       }
     ],
@@ -762,6 +810,408 @@
         "rate": 441.0,
         "effective_date": null,
         "retrieved_at": "2026-11-03T15:00:23.020789+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-03T15:30:22.519719+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-03T16:00:22.735238+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-03T16:30:23.011799+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-03T17:00:24.277858+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-03T17:30:23.722885+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-03T18:00:26.168328+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-03T18:30:25.131738+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-03T19:00:25.117884+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-03T19:30:24.633721+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-03T20:00:25.090522+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-03T20:30:24.771338+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-03T21:00:24.862323+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-03T21:30:24.646745+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-03T22:00:24.124288+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-03T22:30:24.420742+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-03T23:00:22.074983+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-04T15:00:25.220474+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-04T15:30:24.594086+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-04T16:00:24.891662+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-04T16:30:25.572204+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-04T17:00:24.850384+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-04T17:30:25.458907+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-04T18:00:25.548639+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-04T18:30:22.422419+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-04T19:00:23.964264+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-04T19:30:22.447176+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-04T20:00:22.337455+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-04T20:30:23.064254+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-04T21:00:23.333820+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-04T21:30:23.280394+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-04T22:00:23.080981+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-04T22:30:22.610435+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-05T15:00:24.991787+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-05T15:30:24.797933+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-05T16:00:25.322370+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-05T16:30:25.332104+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-05T17:00:25.036842+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-05T17:30:24.740649+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-05T18:00:22.803475+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-05T18:30:23.172826+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 441.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-05T19:00:22.690053+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-05T19:30:22.730363+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-05T20:00:23.009588+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-05T20:30:22.249712+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-05T21:00:22.739309+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-05T21:30:23.027370+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-05T22:00:22.892197+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-05T22:30:23.271450+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-05T23:00:23.275757+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-06T15:00:24.413952+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-06T15:30:25.457456+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-06T16:00:23.936803+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-06T16:30:25.385335+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-06T17:00:24.067417+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-06T17:30:24.693456+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-06T18:00:25.013451+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-06T18:30:24.412886+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-06T19:00:24.629584+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-06T19:30:25.292667+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-06T20:00:24.040804+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-06T20:30:25.589700+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-06T21:00:22.788668+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-06T21:30:22.973155+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-06T22:00:22.786968+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-06T22:30:22.702083+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 439.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-06T23:00:22.915360+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 438.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-09T15:00:25.357530+00:00",
         "units": "CRC/USD"
       }
     ]
