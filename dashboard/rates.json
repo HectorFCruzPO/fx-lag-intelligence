@@ -1,22 +1,22 @@
 {
-  "generated_at": "2026-11-18T23:05:15.256744+00:00",
+  "generated_at": "2026-11-19T15:05:19.227094+00:00",
   "sources": {
     "monex": {
-      "rate": 447.58,
-      "effective_date": "2026-11-17",
-      "retrieved_at": "2026-11-18T23:00:47.611169+00:00",
+      "rate": 444.85,
+      "effective_date": "2026-11-18",
+      "retrieved_at": "2026-11-19T15:00:47.561031+00:00",
       "units": "CRC/USD"
     },
     "bccr": {
-      "rate": 444.77,
-      "effective_date": "2026-11-18",
-      "retrieved_at": "2026-11-18T23:00:02.420981+00:00",
+      "rate": 443.93,
+      "effective_date": "2026-11-19",
+      "retrieved_at": "2026-11-19T15:00:05.700617+00:00",
       "units": "CRC/USD"
     },
     "promerica": {
-      "rate": 436.0,
+      "rate": 434.0,
       "effective_date": null,
-      "retrieved_at": "2026-11-18T23:00:23.656969+00:00",
+      "retrieved_at": "2026-11-19T15:00:22.823847+00:00",
       "units": "CRC/USD"
     }
   },
@@ -147,6 +147,12 @@
         "effective_date": "2026-11-17",
         "retrieved_at": "2026-11-18T23:00:47.611169+00:00",
         "units": "CRC/USD"
+      },
+      {
+        "rate": 444.85,
+        "effective_date": "2026-11-18",
+        "retrieved_at": "2026-11-19T15:00:47.561031+00:00",
+        "units": "CRC/USD"
       }
     ],
     "bccr": [
@@ -268,6 +274,12 @@
         "rate": 444.77,
         "effective_date": "2026-11-18",
         "retrieved_at": "2026-11-18T23:00:02.420981+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 443.93,
+        "effective_date": "2026-11-19",
+        "retrieved_at": "2026-11-19T15:00:05.700617+00:00",
         "units": "CRC/USD"
       }
     ],
@@ -2082,6 +2094,12 @@
         "rate": 436.0,
         "effective_date": null,
         "retrieved_at": "2026-11-18T23:00:23.656969+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 434.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-19T15:00:22.823847+00:00",
         "units": "CRC/USD"
       }
     ]
