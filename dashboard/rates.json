@@ -1,22 +1,22 @@
 {
-  "generated_at": "2026-11-19T23:05:15.237650+00:00",
+  "generated_at": "2026-11-20T15:05:19.608004+00:00",
   "sources": {
     "monex": {
-      "rate": 444.85,
-      "effective_date": "2026-11-18",
-      "retrieved_at": "2026-11-19T23:00:47.520751+00:00",
+      "rate": 444.45,
+      "effective_date": "2026-11-19",
+      "retrieved_at": "2026-11-20T15:00:47.651926+00:00",
       "units": "CRC/USD"
     },
     "bccr": {
-      "rate": 443.93,
-      "effective_date": "2026-11-19",
-      "retrieved_at": "2026-11-19T23:00:02.484747+00:00",
+      "rate": 442.31,
+      "effective_date": "2026-11-20",
+      "retrieved_at": "2026-11-20T15:00:05.983895+00:00",
       "units": "CRC/USD"
     },
     "promerica": {
       "rate": 434.0,
       "effective_date": null,
-      "retrieved_at": "2026-11-19T23:00:23.578918+00:00",
+      "retrieved_at": "2026-11-20T15:00:23.663122+00:00",
       "units": "CRC/USD"
     }
   },
@@ -153,6 +153,12 @@
         "effective_date": "2026-11-18",
         "retrieved_at": "2026-11-19T23:00:47.520751+00:00",
         "units": "CRC/USD"
+      },
+      {
+        "rate": 444.45,
+        "effective_date": "2026-11-19",
+        "retrieved_at": "2026-11-20T15:00:47.651926+00:00",
+        "units": "CRC/USD"
       }
     ],
     "bccr": [
@@ -280,6 +286,12 @@
         "rate": 443.93,
         "effective_date": "2026-11-19",
         "retrieved_at": "2026-11-19T23:00:02.484747+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 442.31,
+        "effective_date": "2026-11-20",
+        "retrieved_at": "2026-11-20T15:00:05.983895+00:00",
         "units": "CRC/USD"
       }
     ],
@@ -2196,6 +2208,12 @@
         "rate": 434.0,
         "effective_date": null,
         "retrieved_at": "2026-11-19T23:00:23.578918+00:00",
+        "units": "CRC/USD"
+      },
+      {
+        "rate": 434.0,
+        "effective_date": null,
+        "retrieved_at": "2026-11-20T15:00:23.663122+00:00",
         "units": "CRC/USD"
       }
     ]
